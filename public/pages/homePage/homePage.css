@@ -1,0 +1,154 @@
+#home-page{
+    height: 100%;
+
+    display: flex;
+    gap:1rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#home-page button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap:1rem;
+    font-weight: 600;
+    font-size: 1.25rem;
+
+    padding:0.75rem 2rem;
+    background-color: var(--main-green-color);
+    border-radius: 3rem;
+}
+
+#home-page img{
+    width: 1.75rem;
+}
+
+#home-page #circle-box .circle{
+    border-radius: 50%;
+    filter: blur(2rem);
+    position: absolute;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+#home-page #circle-box #circle-one{
+    background-color: var(--green-bubble-color);
+    width: 25rem;
+    height: 25rem;
+    top:8rem;
+    left:8rem;
+
+    animation-name: circleOneMove;
+    animation-duration: 35s;
+}
+#home-page #circle-box #circle-two{
+    background-color: var(--purple-bubble-color);
+    width: 12rem;
+    height: 12rem;
+    top:30rem;
+    left:8rem;
+
+    animation-name: circleTwoMove;
+    animation-duration: 15s;
+}
+#home-page #circle-box #circle-three{
+    background-color: var(--purple-bubble-dark-color);
+    width: 32rem;
+    height: 32rem;
+    top:-4rem;
+    right:-4rem;
+
+    animation-name: circleThreeMove;
+    animation-duration: 40s;
+}
+#home-page #circle-box #circle-four{
+    background-color: var(--green-bubble-color);
+    width: 25rem;
+    height: 25rem;
+    bottom:-2rem;
+    right:1rem;
+
+    animation-name: circleFourMove;
+    animation-duration: 25s;
+}
+#home-page #circle-box #circle-five{
+    background-color: var(--purple-bubble-color);
+    width: 20rem;
+    height: 20rem;
+    bottom:-2rem;
+    right:20rem;
+
+    animation-name: circleFiveMove;
+    animation-duration: 30s;
+}
+
+
+@keyframes circleOneMove {
+    0%{
+        transform: rotate(0deg) translate(-50%);
+    }
+
+    50%{
+        transform: rotate(250deg) translate(-100%);
+    }
+
+    100%{
+        transform: rotate(360deg) translate(-50%);
+    }    
+}
+
+@keyframes circleTwoMove {
+    0%{
+        transform: rotate(0deg) translate(0%);
+    }
+
+    50%{
+        transform: rotate(140deg) translate(100%);
+    }
+
+    100%{
+        transform: rotate(0deg) translate(0%);
+    }   
+}
+
+@keyframes circleThreeMove {
+  0%   {transform: translate(0%, 0);}
+  25%  {transform: translate(-100%, 50%);}
+  50%  {transform: translate(0%, 0);}
+  75%  {transform: translate(-100%, -50%);}
+  100% {transform: translate(0%, 0);}
+}
+
+@keyframes circleFourMove {
+    0%{
+        transform: rotate(0deg) translate(0%);
+    }
+
+    50%{
+        transform: rotate(-180deg) translate(100%);
+    }
+
+    100%{
+        transform: rotate(0deg) translate(0%);
+    }   
+
+}
+
+@keyframes circleFiveMove {
+    0%{
+        transform: rotate(0deg) translate(0%, 0%);
+    }
+
+    50%{
+        transform: rotate(90deg) translate(-300%, 10%);
+    }
+
+    100%{
+        transform: rotate(0deg) translate(0%, 0%);
+    }   
+
+}
+
+

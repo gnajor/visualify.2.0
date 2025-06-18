@@ -1,0 +1,37 @@
+:root{
+    --main-black-color: #121212;
+    --main-green-color: #1ED760;
+    --main-purple-color: #BB87FE;
+
+    --green-bubble-color: #1ED7604D;
+    --purple-bubble-dark-color:#8526FF4D;
+    --purple-bubble-color: #A056FF4D;
+}
+
+*{
+    box-sizing: border-box;
+}
+
+body{
+    margin: 0;
+    background-color: var(--main-black-color);
+    font-family: sans-serif;
+    overflow: hidden;
+}
+
+p,h1,h2,h3,h4{
+    margin: 0;
+}
+
+button{
+    border: none;
+    background-color: transparent;
+}
+
+#wrapper{
+    height: 100vh;
+}
+
+
+
+
