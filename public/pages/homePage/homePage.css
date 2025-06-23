@@ -31,6 +31,7 @@
     position: absolute;
     animation-iteration-count: infinite;
     animation-timing-function: linear;
+    z-index: -1;
 }
 
 #home-page #circle-box #circle-one{

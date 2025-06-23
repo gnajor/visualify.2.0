@@ -1,4 +1,5 @@
 import { Logo } from "../../components/logo/logo.js";
+import { handleRedirect } from "../../logic/handleRedirect.js";
 
 export function renderHomePage(parent){
     parent.innerHTML = `<div id="home-page">
@@ -21,6 +22,6 @@ export function renderHomePage(parent){
     const logo = new Logo(logoContainer, 500, 100);
 
     loginButton.addEventListener("click", () => {
-        //redirect
+        handleRedirect();
     });
 }
