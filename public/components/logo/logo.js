@@ -24,8 +24,6 @@ export class Logo{
     }
 
     renderRects(){
-        console.log(this.svg)
-
         this.rects = this.svg.selectAll("rect")
             .data(this.data)
             .enter()
