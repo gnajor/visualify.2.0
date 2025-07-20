@@ -49,8 +49,8 @@ export async function getCountryFromMusicBrainz(artistName: string): Promise<any
 }
 
 export async function setToken(data: Record<string, string>): Promise<Response>{
-    const accessToken = data.accessToken;
-    const refreshToken = data.refreshToken;
+    const accessToken = data.access_token;
+    const refreshToken = data.refresh_token;
     const headers = new Headers();
 
     setCookie(headers, {
@@ -72,9 +72,11 @@ export async function setToken(data: Record<string, string>): Promise<Response>{
         path: "/",
         maxAge: 3600
     });
-    
 
-    return new Response(JSON.stringify({success: true}), {status: 200});
+    return new Response(JSON.stringify({ success: true }), {
+        status: 200,
+        headers,
+    });
 }
 
 export async function handleLogout(): Promise<Response>{
@@ -108,7 +110,7 @@ export async function authSpotifyUser(request: Request): Promise<Response | stri
         const refreshed = await refreshAccessToken(refreshToken);
 
         if(!refreshed){
-            return new Response("Session expired", {status: 401});
+            return new Response(JSON.stringify("Session expired"), {status: 401});
         }
 
         accessToken = refreshed.access_token;
@@ -131,7 +133,7 @@ export async function authSpotifyUser(request: Request): Promise<Response | stri
         });
 
         if(!response.ok){
-            return new Response("Still unauthorized", { status: 401, headers });
+            return new Response(JSON.stringify("Still unauthorized"), { status: 401, headers });
         }
         return accessToken;
     }

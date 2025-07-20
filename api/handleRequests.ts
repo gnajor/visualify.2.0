@@ -3,14 +3,18 @@ import { authSpotifyUser, getCountryFromMusicBrainz, getCountryFromWikdata, hand
 export async function handleRequests(request: Request): Promise<Response>{
     const url = new URL(request.url);
     const pathname = url.pathname;
-    const data = await request.json();
 
     if(pathname === "/api/top-items" && request.method === "GET"){
-        const type = data.type;
-        const range = data.range;
+        const type = url.searchParams.get("type");
+        const range = url.searchParams.get("range");
+        const offset = url.searchParams.get("offset");
         const token = await authSpotifyUser(request);
 
-        const url = `https://api.spotify.com/v1/me/top/${type}?time_range=${range}&limit=50&offset=0`;
+        if(typeof token !== "string"){
+            return new Response(JSON.stringify("unathorized"), {status: 401});
+        }
+
+        const spotifyUrl = `https://api.spotify.com/v1/me/top/${type}?time_range=${range}&limit=50&offset=${offset}`;
         const options = {
             method: 'GET',
             headers: {
@@ -19,17 +23,19 @@ export async function handleRequests(request: Request): Promise<Response>{
         };
 
         try {
-            const request = await fetch(url, options);
-            const response = await request.json();
+            const spotifyResponse = await fetch(spotifyUrl, options);
+            const response = await spotifyResponse.json();
             const topItems = response.items;
+
             return new Response(JSON.stringify(topItems), {status: 200});
         } 
         catch(error) {
-            return new Response('Error: ' + error, {status: 500})
+            return new Response(JSON.stringify('Error: ' + error), {status: 500})
         }
     }
 
     if(pathname === "/api/latest-songs" && request.method === "GET"){
+        const data = await request.json();
         const days = data.days;
         const token = await authSpotifyUser(request);
         const promises = [];
@@ -57,11 +63,12 @@ export async function handleRequests(request: Request): Promise<Response>{
             return new Response(JSON.stringify(latestItems), {status: 200});
         } 
         catch(error) {
-            return new Response('Error: ' + error, {status: 500})
+            return new Response(JSON.stringify('Error: ' + error), {status: 500})
         }
     }
 
     if(pathname === "/api/song-country" && request.method === "GET"){
+        const data = await request.json();
         const spotifyId = data.spotifyId;
         const artistName = data.artistName;
         const wikidataCountry = await getCountryFromWikdata(spotifyId);
@@ -82,11 +89,12 @@ export async function handleRequests(request: Request): Promise<Response>{
     }
 
     if(pathname === "/api/set-token" && request.method === "POST"){
+        const data = await request.json();
         const code = data.code;
         const codeVerifier = data.codeVerifier;
 
-        const clientId = Deno.env.get("SPOTIFY_CLIENT_ID");
-        const redirectUri = Deno.env.get("SPOTIFY_REDIRECT_URI");
+        const clientId = "aa99b24e94d448eab167b514b89f2de2";
+        const redirectUri = "http://127.0.0.1:8888/";
 
         if(!clientId){
             return new Response(JSON.stringify({error: "client_id does not exist"}), {status: 500});
@@ -105,7 +113,6 @@ export async function handleRequests(request: Request): Promise<Response>{
             scope:"user-read-recently-played"
         });
 
-
         try{
             const response = await fetch("https://accounts.spotify.com/api/token", {
                 method: 'POST',
@@ -119,13 +126,24 @@ export async function handleRequests(request: Request): Promise<Response>{
             return await setToken(tokenData);
         }
         catch(error){
-            return new Response('Error: ' + error, {status: 500})
+            return new Response(JSON.stringify('Error: ' + error), {status: 500})
         }
     }
 
-    if(pathname === "/api/logout"){
+    if(pathname === "/api/logout" && request.method === "POST"){
         return await handleLogout();
     }
 
-    return new Response('Error: url does not exist', {status: 400});
+    if(pathname === "/api/check-token-auth" && request.method === "GET"){
+        const token = await authSpotifyUser(request);
+
+        if(typeof token === "string"){
+            return new Response(JSON.stringify("Authorized"), {status: 202})
+        }
+        else{
+            return token;
+        }
+    }
+
+    return new Response(JSON.stringify('Error: url does not exist'), {status: 400});
 }
