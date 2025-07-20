@@ -1,0 +1,111 @@
+header{
+    height: var(--header-height);
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    padding: 0 4rem;
+    margin:var(--header-margin-top) 0; 
+}
+
+header nav{
+    height: 100%;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+header nav #nav-items{
+    --item-padding: 1rem;
+
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap:calc(4rem - var(--item-padding));
+
+    padding:0.5rem 0rem;
+    border-radius: 4rem;
+    position: relative;
+
+    background-color: var(--menu-black-color);
+}
+
+header nav #dashboard-nav-item{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 3.7rem;
+    border-radius: 50%;
+    background-color: var(--menu-black-color);
+    cursor: pointer;
+}
+
+header nav .nav-item{
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+
+    height: 100%;
+    padding: 0 var(--item-padding);
+    cursor: pointer;
+    
+    position: relative;
+    z-index: 2;
+
+    color: white;
+    font-weight: bold;
+    transition: 400ms color ease-in-out;
+}
+
+header nav .nav-item:first-child{
+    margin-left: 0.5rem;
+}
+
+header nav .nav-item:last-child{
+    margin-right: 0.5rem;
+}
+
+header nav .nav-item.marked{
+    color: black;
+}
+
+header nav #dashboard-nav-item{
+    height: 100%;
+}
+
+header nav img{
+    height: 1.35rem;
+}
+
+header nav #marker{
+    position: absolute;
+    border-radius: 4rem;
+    background-color: var(--main-purple-color);
+    z-index: 1;
+    transition: 400ms all ease-in-out;
+}
+
+header #selector-container{
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+header select{
+    background-color: var(--main-green-color);
+    width: 100%;
+    height: 70%;
+    font-size: 1rem;
+    text-align: center;
+    position: absolute;
+    opacity: 0;
+    color: black;
+}
+
+header select.current{
+    z-index: 10;
+    opacity: 1;
+}
