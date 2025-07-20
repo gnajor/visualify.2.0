@@ -19,8 +19,7 @@ export class Logo{
         this.svg = d3.select("#" + this.parent.id + " svg");  
 
         this.prepScales();
-        this.renderRects();     
-        this.initAnimation();
+        this.renderRects();
     }
 
     renderRects(){

@@ -2,10 +2,24 @@
     --main-black-color: #121212;
     --main-green-color: #1ED760;
     --main-purple-color: #BB87FE;
-
+    
+    --menu-black-color: #000000;
     --green-bubble-color: #1ED7604D;
     --purple-bubble-dark-color:#8526FF4D;
     --purple-bubble-color: #A056FF4D;
+
+    --dark-grey: #484848;
+    --darkest-grey: #1D1D1D;
+    --light-grey: #8E8E8E;
+    --white: #fff;
+
+    --lilac: #D2AFFF;
+    --light-lilac: #F0E5FD;
+    --dark-purple: #9745FF;
+
+
+    --header-height: 3.7rem;
+    --header-margin-top:2rem;
 }
 
 *{
@@ -23,9 +37,18 @@ p,h1,h2,h3,h4{
     margin: 0;
 }
 
-button{
-    border: none;
-    background-color: transparent;
+button, select {
+    border-radius: 4rem;
+    border: 2px solid var(--spotifyGreen);
+    background: rgba(217, 217, 217, 0.00);
+    color: var(--black);
+    font-weight: bold;
+}
+
+section .diagram-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #wrapper{
