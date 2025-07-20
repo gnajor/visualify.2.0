@@ -1,13 +1,16 @@
-import { serveDir} from "jsr:@std/http/file-server";
+import { serveDir, serveFile} from "jsr:@std/http/file-server";
+import { extname } from "jsr:@std/path/extname";
 import { handleRequests } from "../api/handleRequests.ts";
 
 export function serverRequests(request: Request){
     const pathname = new URL(request.url).pathname;
 
-    console.log(pathname)
-
     if(pathname.startsWith("/api/")){
         return handleRequests(request);
+    }
+
+    if(pathname === "/" || !extname(pathname)){
+        return serveFile(request, Deno.cwd() + "/public/index.html");
     }
 
     return serveDir(request, {
