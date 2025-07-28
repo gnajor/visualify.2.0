@@ -1,4 +1,5 @@
 import { State } from "../../../index.js";
+import { updateCurrentMainPage } from "../../../pages/mainPage/structure.js";
 import { Selector } from "../selector/selector.js";
 
 export function renderNav(parent){
@@ -24,12 +25,7 @@ export function renderNav(parent){
         element.addEventListener("click", () => {
             navItems.forEach(element => element.classList.remove("marked"));
             updateMarker(element, menu, marker);
-            
-            State.setCurrentPage(i);
-            const instance = Selector.getCurrentSelectorbyId(i);
-            console.log(instance)
-
-            Selector.updateSelector(instance);
+            updateCurrentMainPage(`${- i * 100}vw` , i);
         })
     });
 }

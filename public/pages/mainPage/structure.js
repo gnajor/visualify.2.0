@@ -1,6 +1,7 @@
 import { renderHeader } from "../../components/header/header.js";
-import { getMostPlayedData } from "../../logic/utils.js";
 import { renderDecadePage } from "../mainPage/decades/decades.js";
+import { renderMostPlayedPage } from "./mostPlayedPage/mostPlayedPage.js";
+import { Selector } from "../../components/header/selector/selector.js";
 
 export function renderStructure(parent){
     parent.innerHTML = `<header></header>
@@ -25,5 +26,14 @@ export function renderStructure(parent){
     const pageDoms = parent.querySelectorAll("section");
     renderHeader(header, pageDoms, habitsPage.id);
     renderDecadePage(decadePage);
+    renderMostPlayedPage(mostPlayedPage);
+}
+
+export function updateCurrentMainPage(pageValue, pageIndex){
+    const main = document.querySelector("main");
+    main.style.transform = `translate(${pageValue}, 0)`;
+
+    const instance = Selector.getCurrentSelectorbyId(pageIndex);
+    Selector.updateSelector(instance);
 }
 
