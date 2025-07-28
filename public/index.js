@@ -20,15 +20,10 @@ export const State = {
             long_term: null
         }
     },
-    currentPage: 0, 
 
     setStateData(key, timeTerm, data){
         this.userData[key][timeTerm] = data;
     },
-
-    setCurrentPage(pageNum){
-        State.currentPage = pageNum;
-    }
 }
 
 const app = {
