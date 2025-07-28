@@ -1,10 +1,12 @@
 import { Selector } from "../../../components/header/selector/selector.js";
 import { State } from "../../../index.js";
-import { getDecadeData } from "../../../logic/utils.js";
+import { formateSongs, getDecadeData } from "../../../logic/utils.js";
 
 export function renderDecadePage(parent){
     const parentId = "#" + parent.id;
     const dataset = getDecadeData();
+
+    console.log(dataset)
 
     const diagramContainer = document.createElement("div");
     const songContainer = document.createElement("div");
@@ -29,14 +31,19 @@ function renderArtistDivs(parentSelector, songs){
 
     for(const song of songs){
         if(song.image){
-            parent.innerHTML += `<div class="song" id="song${song.decade}">
-                                    <h3 class="decadeTitle">${song.decade}'s</h3>
-                                    <img src=${song.image}>
-                                    <div class="artistInfo">
-                                        <h4>Top Artist</h4>
-                                        <h3>${song.topArtist}</h3>
-                                    </div>
-                                <div>`;
+            const songContainer = document.createElement("div");
+            parent.appendChild(songContainer)
+            songContainer.id = `song-${song.decade}`;
+            songContainer.className = "song";
+            songContainer.style.backgroundImage = `url(${song.image})`;
+
+            songContainer.innerHTML += `<div class="decade-title-container">
+                                            <h3 class="decade-title">Top ${song.decade}s <br> song</h3>
+                                        </div>
+                                        <div class="song-info-container">
+                                            <h3 class="song-name">${formateSongs(song.songName)}</h3>
+                                            <h3 class="artist-name">By ${song.topArtist}</h3>
+                                        </div>`;            
         }
     }
 }
@@ -47,9 +54,9 @@ class CircularBarChart{
         this.dataset = dataset;
 
         this.margin = {
-            top: 20,
+            top: 0,
             right: 80,
-            bottom: 20,     
+            bottom: 0,     
             left: 80
         }
         this.colors = {
@@ -64,7 +71,7 @@ class CircularBarChart{
         this.wViz = this.wSvg - this.margin.left - this.margin.right;
 
         this.rotation = ((1/dataset.length) * 360)/2;
-        this.innerRadius = 80;
+        this.innerRadius = this.wSvg / 10;
         this.outerRadius = d3.min([this.hViz, this.wViz]) / 1.7;
 
         this.init();
@@ -72,8 +79,9 @@ class CircularBarChart{
 
     init(){
         this.svg = this.parent.append("svg")
-            .attr("width", this.wSvg)
-            .attr("height", this.hSvg)
+            .attr("width", "100%")
+            .attr("height", "auto")
+            .attr("viewBox", `0 0 ${this.wSvg} ${this.hSvg}`)
             .classed("circular-bar-chart", true)
 
         this.graphGroup = this.svg.append("g")
@@ -190,12 +198,12 @@ class CircularBarChart{
             d3.select(this)
                 .on("mouseenter", () => {
                     this.classList.add("pieHover");
-                    d3.select(`#song${d.decade}`).classed("show", true)
+                    d3.select(`#song-${d.decade}`).classed("show", true)
                     d3.select("#pieText-" + (i + 1)).classed("pieTextHover", true)
                 })
                 .on("mouseleave", () => {
                     this.classList.remove("pieHover");
-                    d3.select(`#song${d.decade}`).classed("show", false)
+                    d3.select(`#song-${d.decade}`).classed("show", false)
                     d3.select("#pieText-" + (i + 1)).classed("pieTextHover", false)
                 });
         })
@@ -203,12 +211,12 @@ class CircularBarChart{
         this.graphGroup.selectAll(".pieBackground").each(function(d, i){
             d3.select(this)
                 .on("mouseenter", () => {
-                    d3.select(`#song${d.decade}`).classed("show", true)
+                    d3.select(`#song-${d.decade}`).classed("show", true)
                     d3.select("#pie-" + (i + 1)).classed("pieHover", true)
                     d3.select("#pieText-" + (i + 1)).classed("pieTextHover", true)
                 })
                 .on("mouseleave", () => {
-                    d3.select(`#song${d.decade}`).classed("show", false)
+                    d3.select(`#song-${d.decade}`).classed("show", false)
                     d3.select("#pie-" + (i + 1)).classed("pieHover", false)
                     d3.select("#pieText-" + (i + 1)).classed("pieTextHover", false)
                 });
