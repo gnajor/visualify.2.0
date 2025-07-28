@@ -51,10 +51,13 @@ export function getDecadeData(){
                 amount: decadefiltered.length,
                 topArtist: false,
                 image: false,
+                songName: false,
+
             }
             if(decadefiltered.length !== 0){
                 obj.topArtist = decadefiltered[0].artists[0].name;
                 obj.image = decadefiltered[0].album.images[0].url;
+                obj.songName = decadefiltered[0].name;
             }
 
             formatted[timeTerm].push(obj); 
@@ -99,4 +102,18 @@ export function getMostPlayedData(){
         formatted.tracks[range].slice(0, 50);
     }
     return formatted;
+}
+
+export function formateSongs(songName){
+
+    if(songName.includes("(")){
+        songName = songName.split("(")[0];
+    }
+
+    if(songName.includes(" - ")){
+        songName = songName.split(" -")[0];
+    }
+    
+    return songName;
+
 }
