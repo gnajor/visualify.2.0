@@ -141,7 +141,7 @@ export async function authSpotifyUser(request: Request): Promise<Response | stri
 }
 
 async function refreshAccessToken(refreshToken: string): Promise<null | { access_token: string, expires_in: number }>{
-    const clientId = Deno.env.get("SPOTIFY_CLIENT_ID");
+    const clientId = /* Deno.env.get("SPOTIFY_CLIENT_ID") */ "aa99b24e94d448eab167b514b89f2de2";
 
     if(!clientId){
         return null;
