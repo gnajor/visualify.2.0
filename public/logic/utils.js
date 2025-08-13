@@ -104,7 +104,36 @@ export function getMostPlayedData(){
     return formatted;
 }
 
-export function formateSongs(songName){
+export function getGenreData(){
+    const ranges = Object.keys(State.userData.artists);
+    const formatted = {};
+
+    for(const range of ranges){
+        const genres = [];
+
+        for(const artist of State.userData.artists[range]){
+            artist.genres.forEach((genre) => {
+                const exists = genres.find(genreItem => genreItem.genre === genre);
+
+                if(exists){
+                    exists.value++;
+                }
+                else{
+                    genres.push({
+                        genre,
+                        "value": 1
+                    })
+                }
+            });
+        }
+
+        formatted[range] = genres;
+    }
+    
+    console.log(formatted)
+}
+
+export function formatSongs(songName){
 
     if(songName.includes("(")){
         songName = songName.split("(")[0];
