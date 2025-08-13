@@ -1,4 +1,6 @@
 header{
+    font-size: inherit;
+
     height: var(--header-height);
     width: 100%;
 
@@ -13,20 +15,20 @@ header{
 header nav{
     height: 100%;
     display: flex;
-    gap: 1rem;
+    gap: 1em;
     align-items: center;
 }
 
 header nav #nav-items{
-    --item-padding: 1rem;
+    --item-padding: 1em;
 
     height: 100%;
     display: flex;
     align-items: center;
-    gap:calc(4rem - var(--item-padding));
+    gap:calc(4em - var(--item-padding));
 
-    padding:0.5rem 0rem;
-    border-radius: 4rem;
+    padding:0.5em 0em;
+    border-radius: 4em;
     position: relative;
 
     background-color: var(--menu-black-color);
@@ -37,7 +39,7 @@ header nav #dashboard-nav-item{
     justify-content: center;
     align-items: center;
 
-    width: 3.7rem;
+    width: 3.7em;
     border-radius: 50%;
     background-color: var(--menu-black-color);
     cursor: pointer;
@@ -46,7 +48,7 @@ header nav #dashboard-nav-item{
 header nav .nav-item{
     display: flex;
     align-items: center;
-    font-size: 1.1rem;
+    font-size: 1.1em;
 
     height: 100%;
     padding: 0 var(--item-padding);
@@ -61,11 +63,11 @@ header nav .nav-item{
 }
 
 header nav .nav-item:first-child{
-    margin-left: 0.5rem;
+    margin-left: 0.5em;
 }
 
 header nav .nav-item:last-child{
-    margin-right: 0.5rem;
+    margin-right: 0.5em;
 }
 
 header nav .nav-item.marked{
@@ -77,28 +79,102 @@ header nav #dashboard-nav-item{
 }
 
 header nav img{
-    height: 1.35rem;
-}
+    height: 1.35em;
+} 
 
 header nav #marker{
     position: absolute;
-    border-radius: 4rem;
+    border-radius: 4em;
     background-color: var(--main-purple-color);
     z-index: 1;
     transition: 400ms all ease-in-out;
 }
 
-header #selector-container{
+header #properties-container{
     position: relative;
     display: flex;
     align-items: center;
+    
 }
+
+header #properties-container > div{
+    height: 70%;
+}
+
+header #properties-container #selector-container{
+    width: 100%;
+}
+
+header #selector-container{
+    position: relative;
+    width: 100%;
+}
+
+header #switch-container{
+    width: 60%;
+    position: absolute;
+    right: 110%;
+}
+
+
+header .switch{
+    border-radius: 4em;
+    display: flex;
+    height: 100%;
+    width: 100%;
+    background-color: var(--menu-black-color);
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity ease-in-out 300ms;
+}
+
+header .switch > div{
+    border-radius: 4em;
+    width: 2.5rem;
+    height: 70%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 0;
+}
+
+header .switch div:first-child{margin-left: 0.5em;}
+header .switch div:nth-child(2){margin-right: 0.5em;}
+
+header .switch.current{
+    opacity: 1;
+}
+
+header .switch #switch-marker{
+    position: absolute;
+    border-radius: 4em;
+    background-color: var(--main-green-color);
+    z-index: 1;
+    transition: 400ms all ease-in-out;
+}
+
+header .switch img{
+    line-height: 0;
+    height: 1em;
+    position: relative;
+    transition: 400ms all ease-in-out;
+    z-index: 2;
+    filter: brightness(0.6);
+}
+
+header .switch > div.marked img{
+    filter: brightness(0);
+}
+
 
 header select{
     background-color: var(--main-green-color);
     width: 100%;
-    height: 70%;
-    font-size: 1rem;
+    height: 100%;
+    font-size: 1em;
     text-align: center;
     position: absolute;
     opacity: 0;
@@ -111,8 +187,21 @@ header select.current{
 }
 
 
+
 @media only screen and (max-width: 1600px) {
     :root{
         font-size: 14px;
+    }
+}
+
+@media only screen and (max-width: 1450px) {
+    :root{
+        font-size: 13px;
+    }
+}
+
+@media only screen and (max-width: 1300px) {
+    :root{
+        font-size: 13px;
     }
 }

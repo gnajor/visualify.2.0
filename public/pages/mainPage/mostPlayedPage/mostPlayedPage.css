@@ -2,3 +2,71 @@
     margin: auto;
     aspect-ratio: 1.5 / 1;
 }
+
+#most-played-page svg image{
+    transition: 200ms filter ease-in-out;   
+    cursor: pointer;
+}
+
+#most-played-page svg image.gray{
+    filter: grayscale(0.7) brightness(0.5);
+}
+
+#most-played-page #data-details-container .item-details.show{
+    opacity: 1;
+    z-index: 1;
+}
+
+#most-played-page #data-details-container .item-details{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: absolute;
+    bottom: 3rem;
+    left:3rem;
+    opacity: 0;
+    z-index: -1;
+    transition: 200ms all ease-in-out;
+}
+
+#most-played-page #data-details-container .item-details > div{
+    display: flex;
+    gap:1rem;
+}
+
+#most-played-page #data-details-container .item-ranking{
+    width: 3.5rem;
+    height: 3.5rem;
+    background-color: var(--main-purple-color);
+    border-radius: 50%;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+#most-played-page #data-details-container .item-name{
+    font-size: 2.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--light-grey);
+    font-weight: bold;
+    font-style: italic;
+}
+
+#most-played-page #data-details-container text{
+    font-weight: bold;
+}
+
+#most-played-page #data-details-container .popularity-title{
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: rgb(112, 112, 112);
+    font-weight: bold;
+}
