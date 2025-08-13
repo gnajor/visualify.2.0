@@ -19,18 +19,27 @@ export function renderNav(parent){
     const navItems = parent.querySelectorAll(".nav-item");
     const marker = parent.querySelector("#marker");
 
-    updateMarker(navItems[0], menu, marker);
+    navItems[0].classList.add("marked");
+    updateNavMarker();
     navItems.forEach((element, i) => {
         element.id = i;
         element.addEventListener("click", () => {
             navItems.forEach(element => element.classList.remove("marked"));
-            updateMarker(element, menu, marker);
+            element.classList.add("marked");
+            updateNavMarker();
             updateCurrentMainPage(`${- i * 100}vw` , i);
         })
     });
 }
 
-function updateMarker(element, menu, marker){
+export function updateNavMarker(){
+    const markedElement = document.querySelector("header nav .nav-item.marked");
+    const menu = document.querySelector("header nav #nav-items");
+    const marker = document.querySelector("header nav #marker");
+    updateMarker(markedElement, menu, marker)
+}
+
+export function updateMarker(element, menu, marker){
     const rect = element.getBoundingClientRect();
     const menuRect = menu.getBoundingClientRect();
     const left = rect.left - menuRect.left;
@@ -38,6 +47,4 @@ function updateMarker(element, menu, marker){
     marker.style.width = rect.width + "px";
     marker.style.height = rect.height + "px";
     marker.style.transform = `translate(${left}px)`;
-
-    element.classList.add("marked");
 }

@@ -1,14 +1,14 @@
 export class Selector{
     static selectorInstances = [];
 
-    static getCurrentSelectorbyId(id){
+    static getCurrentSelectorById(id){
         const instance = Selector.selectorInstances.find(instance => instance.pageNumId === id);
 
         if(!instance) return null;
         return instance;
     }
 
-    static getSelectorbyPageId(id){
+    static getSelectorByPageId(id){
         const instance = Selector.selectorInstances.find(instance => instance.pageId === id);
 
         if(!instance) return null;
