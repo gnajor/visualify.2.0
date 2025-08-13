@@ -1,12 +1,13 @@
 import { renderHeader } from "../../components/header/header.js";
-import { renderDecadePage } from "../mainPage/decades/decades.js";
+import { renderDecadePage } from "../mainPage/decadesPage/decadesPage.js";
 import { renderMostPlayedPage } from "./mostPlayedPage/mostPlayedPage.js";
 import { Selector } from "../../components/header/selector/selector.js";
+import { Switch } from "../../components/header/switch/switch.js";
 
 export function renderStructure(parent){
     parent.innerHTML = `<header></header>
                         <main>
-                            <section id="most-played-page"></section>
+                            <section id="most-played-page" class="switch-button-needed"></section>
                             <section id="decades-page"></section>
                             <section id="genre-page"></section>
                             <section id="habits-page"></section>
@@ -27,13 +28,18 @@ export function renderStructure(parent){
     renderHeader(header, pageDoms, habitsPage.id);
     renderDecadePage(decadePage);
     renderMostPlayedPage(mostPlayedPage);
+
+    
 }
 
 export function updateCurrentMainPage(pageValue, pageIndex){
     const main = document.querySelector("main");
     main.style.transform = `translate(${pageValue}, 0)`;
 
-    const instance = Selector.getCurrentSelectorbyId(pageIndex);
-    Selector.updateSelector(instance);
+    const selectorInstance = Selector.getCurrentSelectorById(pageIndex);
+    const switchInstance = Switch.getCurrentSwitchById(pageIndex);
+    
+    if(selectorInstance)Selector.updateSelector(selectorInstance);
+    if(switchInstance)Switch.updateSwitch(switchInstance);
 }
 
