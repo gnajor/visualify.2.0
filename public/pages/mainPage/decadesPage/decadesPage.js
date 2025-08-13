@@ -1,12 +1,9 @@
 import { Selector } from "../../../components/header/selector/selector.js";
-import { State } from "../../../index.js";
-import { formateSongs, getDecadeData } from "../../../logic/utils.js";
+import { formatSongs, getDecadeData } from "../../../logic/utils.js";
 
 export function renderDecadePage(parent){
     const parentId = "#" + parent.id;
     const dataset = getDecadeData();
-
-    console.log(dataset)
 
     const diagramContainer = document.createElement("div");
     const songContainer = document.createElement("div");
@@ -18,7 +15,7 @@ export function renderDecadePage(parent){
     const circularChart = new CircularBarChart(`${parentId} .${diagramContainer.className}`, dataset["short_term"]);
     renderArtistDivs(`${parentId} .${songContainer.className}`, dataset["short_term"]);
 
-    const selectorInstance = Selector.getSelectorbyPageId(parent.id);
+    const selectorInstance = Selector.getSelectorByPageId(parent.id);
     selectorInstance.event((event) => {
         circularChart.changeData(dataset[event.target.value]);
         renderArtistDivs(`${parentId} .${songContainer.className}`, dataset[event.target.value]);
@@ -41,11 +38,23 @@ function renderArtistDivs(parentSelector, songs){
                                             <h3 class="decade-title">Top ${song.decade}s <br> song</h3>
                                         </div>
                                         <div class="song-info-container">
-                                            <h3 class="song-name">${formateSongs(song.songName)}</h3>
+                                            <h3 class="song-name">${formatSongs(song.songName)}</h3>
                                             <h3 class="artist-name">By ${song.topArtist}</h3>
                                         </div>`;            
         }
     }
+    updateArtistDivPosition();
+}
+
+export function updateArtistDivPosition(){
+    const decadesPage = document.querySelector("#decades-page").getBoundingClientRect();
+    const diagramContainer = document.querySelector("#decades-page .diagram-container").getBoundingClientRect();
+    const songs = document.querySelector("#decades-page .song").getBoundingClientRect();
+    const decadeContainer = document.querySelector("#decades-page .decade-title-container").getBoundingClientRect();
+
+    document.querySelectorAll("#decades-page .song").forEach(element => {
+        element.style.left = (((decadesPage.width - diagramContainer.width)/2) - songs.width + (decadeContainer.width / 2.5))/2 + "px";
+    });
 }
 
 class CircularBarChart{
