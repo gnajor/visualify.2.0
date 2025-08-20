@@ -67,12 +67,14 @@ export async function handleRequests(request: Request): Promise<Response>{
         }
     }
 
-    if(pathname === "/api/song-country" && request.method === "GET"){
+    if(pathname === "/api/song-country" && request.method === "POST"){
         const data = await request.json();
+        console.log(data)
         const spotifyId = data.spotifyId;
         const artistName = data.artistName;
         const wikidataCountry = await getCountryFromWikdata(spotifyId);
         const responseData: Record<string, any> = {};
+
 
         if (wikidataCountry.results.bindings.length > 0){
             responseData.source = "wikidata";
@@ -94,7 +96,7 @@ export async function handleRequests(request: Request): Promise<Response>{
         const codeVerifier = data.codeVerifier;
 
         const clientId = "aa99b24e94d448eab167b514b89f2de2";
-        const redirectUri = "https://visualify.deno.dev/" /* "http://127.0.0.1:8888/" */;
+        const redirectUri = /* "https://visualify.deno.dev/" */ "http://127.0.0.1:8888/";
 
         if(!clientId){
             return new Response(JSON.stringify({error: "client_id does not exist"}), {status: 500});
