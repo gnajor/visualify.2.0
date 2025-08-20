@@ -126,11 +126,29 @@ export function getGenreData(){
                 }
             });
         }
+        formatted[range] = genres.sort((firstItem, secItem) => secItem.value - firstItem.value).slice(0, 50);
+    }    
+    return formatted;
+}
 
-        formatted[range] = genres;
-    }
-    
-    console.log(formatted)
+export function getMapData(){
+    const ranges = Object.keys(State.userData.artists);
+    const formatted = {};
+
+    for(const range of ranges){
+        const data = [];
+
+        for(const artist of State.userData.artists[range]){
+            const mapData = {
+                "name": artist.name,
+                "id": artist.id
+            }
+
+            data.push(mapData);
+        }
+        formatted[range] = data;
+    }    
+    return formatted;
 }
 
 export function formatSongs(songName){
