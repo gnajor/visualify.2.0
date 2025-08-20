@@ -126,7 +126,6 @@ header .switch{
     justify-content: space-between;
     align-items: center;
     position: relative;
-    cursor: pointer;
     opacity: 0;
     transition: opacity ease-in-out 300ms;
 }
@@ -146,6 +145,7 @@ header .switch div:nth-child(2){margin-right: 0.5em;}
 
 header .switch.current{
     opacity: 1;
+    cursor: pointer;
 }
 
 header .switch #switch-marker{

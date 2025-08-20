@@ -48,6 +48,7 @@ button, select {
     background: rgba(217, 217, 217, 0.00);
     color: var(--black);
     font-weight: bold;
+    cursor: pointer;
 }
 
 main{
