@@ -9,7 +9,7 @@ export async function apiCom(action, data){
         }
 
         case "data:get-top-user-data": {
-            options.method = "GET"
+            options.method = "GET";
             const query = new URLSearchParams({
                 type: data.type,
                 range: data.range,
@@ -20,15 +20,11 @@ export async function apiCom(action, data){
             return resource;
         }
 
-        case "user:register": {
-/*             options.method = "POST";
-            options.body = {
-                name: encrypt(data.name),
-                password: encrypt(data.password)
-            }
-            
-            const resource = await fetcher("../../api/register", options);
-            return resource; */
+        case "song:get-country": {
+            options.method = "POST";
+            options.body = data;
+            const resource = await fetcher("/api/song-country", options, true);
+            return resource; 
         }
 
         case "token-name:authorization": {
