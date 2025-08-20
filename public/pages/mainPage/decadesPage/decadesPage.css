@@ -30,9 +30,9 @@
     position: absolute;
     opacity: 0;
     z-index: -1;
+    transform: translate(0, -35%);
 
-    left:10rem;
-    top:20%;
+    top:35%;
 
     width: 16.5rem;
     height: 16.5rem;
