@@ -3,6 +3,8 @@ import { renderDecadePage } from "../mainPage/decadesPage/decadesPage.js";
 import { renderMostPlayedPage } from "./mostPlayedPage/mostPlayedPage.js";
 import { Selector } from "../../components/header/selector/selector.js";
 import { Switch } from "../../components/header/switch/switch.js";
+import { renderGenresPage } from "./genresPage/genresPage.js";
+import { renderMapPage } from "./mapPage/mapPage.js";
 
 export function renderStructure(parent){
     parent.innerHTML = `<header></header>
@@ -28,6 +30,8 @@ export function renderStructure(parent){
     renderHeader(header, pageDoms, habitsPage.id);
     renderDecadePage(decadePage);
     renderMostPlayedPage(mostPlayedPage);
+    renderGenresPage(genrePage);
+    renderMapPage(musicMapPage);
 
     
 }
