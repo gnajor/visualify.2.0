@@ -43,7 +43,19 @@ export class Selector{
                                   <option value="long_term">Last 7 days</option>`;
     }
 
+    disable(){
+        this.element.classList.add("disabled");
+        this.element.setAttribute("disabled", true);
+    }
+
+    enable(){
+        this.element.classList.remove("disabled")
+        this.element.removeAttribute("disabled", true);
+    }
+
     event(func){
         this.element.addEventListener("change", func);
     }
+
+
 }
