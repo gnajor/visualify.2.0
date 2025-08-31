@@ -19,7 +19,8 @@ export function renderHomePage(parent){
 
     const loginButton = parent.querySelector("button#login");
     const logoContainer = parent.querySelector("#logo");
-    const logo = new Logo(logoContainer, 500, 100);
+    const logo = new Logo(logoContainer, 500, 100, 80, 350);
+    logo.initLogo();
     logo.initAnimation();
 
     loginButton.addEventListener("click", async () => {
