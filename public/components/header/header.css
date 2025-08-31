@@ -80,7 +80,7 @@ header nav #dashboard-nav-item{
 
 header nav img{
     height: 1.35em;
-} 
+}
 
 header nav #marker{
     position: absolute;
@@ -89,6 +89,10 @@ header nav #marker{
     z-index: 1;
     transition: 400ms all ease-in-out;
 }
+
+.no-transition header nav #marker{
+    transition: none;
+} 
 
 header #properties-container{
     position: relative;
@@ -178,6 +182,14 @@ header select{
     text-align: center;
     position: absolute;
     opacity: 0;
+    color: black;
+
+    transition: 300ms all ease-in-out;
+}
+
+header select.disabled{
+    background-color: var(--dark-main-green-color);
+    cursor:default;
     color: black;
 }
 

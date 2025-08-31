@@ -3,7 +3,7 @@ import { renderNav } from "./nav/nav.js";
 import { Selector } from "./selector/selector.js";
 import { Switch } from "./switch/switch.js";
 
-export function renderHeader(parent, pageDoms, specPage){
+export function renderHeader(parent, pageDoms){
     parent.innerHTML = `<div id="logo"></div>
                         <nav></nav>
                         <div id="properties-container">
@@ -19,7 +19,8 @@ export function renderHeader(parent, pageDoms, specPage){
 
     const width = "10rem";
     const height = "100%";
-    const logo = new Logo(logoParent, width, height);
+    const logo = new Logo(logoParent, width, height, 80, 350);
+    logo.initLogo();
     renderNav(navContainer);
 
     propertiesContainer.style.width = width;
@@ -42,11 +43,6 @@ export function renderHeader(parent, pageDoms, specPage){
             selector.element.classList.add("current");
         }
 
-        if(page.id === specPage){
-            selector.renderItemsShortRange();
-        }
-        else{
-            selector.renderItemsLongRange();
-        }
+        selector.renderItemsLongRange();
     });
 }
