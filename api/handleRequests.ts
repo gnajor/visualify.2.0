@@ -1,4 +1,8 @@
-import { authSpotifyUser, getCountryFromMusicBrainz, getCountryFromWikdata, handleLogout, setToken } from "./utils.ts";
+import { authSpotifyUser, getCountryFromMusicBrainz, getCountryFromWikdata, getSongFeatures, handleLogout, setToken, sleep } from "./utils.ts";
+
+let musicbrainzErrors: number = 0;
+let wikidataErrors: number = 0;
+let total: number = 0;
 
 export async function handleRequests(request: Request): Promise<Response>{
     const url = new URL(request.url);
@@ -69,14 +73,16 @@ export async function handleRequests(request: Request): Promise<Response>{
 
     if(pathname === "/api/song-country" && request.method === "POST"){
         const data = await request.json();
-        console.log(data)
         const spotifyId = data.spotifyId;
         const artistName = data.artistName;
         const wikidataCountry = await getCountryFromWikdata(spotifyId);
+        await sleep(500); //1000 => (65/77) (82/100) 
         const responseData: Record<string, any> = {};
 
+        
+        if(responseData.result === null) wikidataErrors++;
 
-        if (wikidataCountry.results.bindings.length > 0){
+        if (wikidataCountry){
             responseData.source = "wikidata";
             responseData.result = wikidataCountry;
         }
@@ -85,9 +91,31 @@ export async function handleRequests(request: Request): Promise<Response>{
             const musicbrainzCountry = await getCountryFromMusicBrainz(artistName);
             responseData.source = "musicbrainz";
             responseData.result = musicbrainzCountry;
+            if(responseData.result === null) musicbrainzErrors++;
         }
+        total++;
+
+        console.log("music: " + musicbrainzErrors);
+        console.log("wiki: " + wikidataErrors) //33 //40 //40 //40 //47
+        console.log(total);
 
         return new Response(JSON.stringify(responseData), {status: 200});
+    }
+
+    if(pathname === "/api/song-features" && request.method === "POST"){
+        const data = await request.json();
+        const title = data.title;
+        const artist = data.artist;
+
+        const abdata = await getSongFeatures(artist, title); 
+        await sleep(500); 
+
+        if(abdata === null){
+            musicbrainzErrors++;
+        }
+
+        console.log(musicbrainzErrors);
+        return new Response(JSON.stringify(abdata), {status: 200});
     }
 
     if(pathname === "/api/set-token" && request.method === "POST"){
