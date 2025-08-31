@@ -83,7 +83,7 @@ export function getMostPlayedData(){
         formatted.artists[range] = State.userData.artists[range].map((artist, i) => {
             return {
                 name: artist.name,
-                image: artist.images[0].url,
+                image: artist?.images[0]?.url,
                 popularity: artist.popularity,
                 ranking: i + 1
             }
@@ -122,7 +122,7 @@ export function getGenreData(){
                     genres.push({
                         genre,
                         "value": 1
-                    })
+                    });
                 }
             });
         }
@@ -146,8 +146,29 @@ export function getMapData(){
 
             data.push(mapData);
         }
-        formatted[range] = data;
-    }    
+        if(data.length >= 70) formatted[range] = data.slice(0, 70);
+    }
+    
+    return formatted;
+}
+
+export function getMoodsChartData(){
+    const ranges = Object.keys(State.userData.tracks);
+    const formatted = {};
+
+    for(const range of ranges){
+        const data = [];
+
+        for(const track of State.userData.tracks[range]){
+            const moodsData = {
+                "title": track.name,
+                "artist": track.artists[0].name
+            }
+
+            data.push(moodsData);
+        }
+        formatted[range] = data.slice(0, 25);
+    }
     return formatted;
 }
 
