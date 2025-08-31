@@ -7,7 +7,7 @@ export function renderNav(parent){
                             <div class="nav-item">Most Played</div>
                             <div class="nav-item">Decades</div>
                             <div class="nav-item">Genres</div>
-                            <div class="nav-item">Habits</div>
+                            <div class="nav-item">Moods</div>
                             <div class="nav-item">Map</div>
                         </div>
                         <div id="dashboard-nav-item">
