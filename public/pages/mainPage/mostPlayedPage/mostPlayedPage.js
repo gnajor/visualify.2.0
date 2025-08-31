@@ -232,20 +232,20 @@ class Spiral{
             d3.selectAll(".image-group")
                 .transition().duration(200)
                 .attr("transform", d => `translate(${d.x}, ${d.y}) scale(1)`);
+                
 
             d3.select(this)
                 .transition().duration(200)
                 .attr("transform", (d, i) => {
-                    return`translate(${d.x}, ${d.y}) scale(${1.25 + (d.ranking)/65})` 
-                }) 
+                    return`translate(${d.x}, ${d.y}) scale(${1.25 + (d.ranking)/30})` 
+                })
 
             d3.select(`#item-${d.ranking}`).classed("show", true);
                 
             d3.selectAll("image").classed("gray", true);
             d3.select(this).select("image").classed("gray", false).classed("current", true);
             
-            d3.select(this)
-                .select("circle")
+            d3.select(this).select("circle")
                 .transition()
                 .attr("stroke-width", 0);
         });
@@ -253,15 +253,15 @@ class Spiral{
         this.svg.selectAll(".image-group").on("mouseleave", function (event, d) {
             d3.selectAll(".image-group")
                 .transition().duration(200)
-                .attr("transform", d => `translate(${d.x}, ${d.y}) scale(1)`);
+                .attr("transform", d => `translate(${d.x}, ${d.y}) scale(1)`)
 
             d3.selectAll("image").classed("gray", false).classed("current", false);
             d3.select(`#item-${d.ranking}`).classed("show", false);
 
             d3.select(this)
                 .select("circle")
-                .transition()
-                .attr("stroke-width", 3);
+                    .transition()
+                    .attr("stroke-width", 3);
         });
     }
 
