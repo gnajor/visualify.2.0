@@ -23,6 +23,50 @@ export const State = {
             long_term: null
         }
     },
+    overlayData: {
+        short_term: {
+            avgPopularity: null,
+            mostListenedCountry: null,
+            mostListenedGenre: null,
+            mostListenedDecade: null,
+            mostListenedTrack: {
+                image: null,
+                name: null,
+            },
+            mostListenedArtist: {
+                image: null,
+                name: null,
+            }
+        },
+        medium_term: {
+            avgPopularity: null,
+            mostListenedCountry: null,
+            mostListenedGenre: null,
+            mostListenedDecade: null,
+            mostListenedTrack: {
+                image: null,
+                name: null,
+            },
+            mostListenedArtist: {
+                image: null,
+                name: null,
+            }
+        },
+        long_term: {
+            avgPopularity: null,
+            mostListenedCountry: null,
+            mostListenedGenre: null,
+            mostListenedDecade: null,
+            mostListenedTrack: {
+                image: null,
+                name: null,
+            },
+            mostListenedArtist: {
+                image: null,
+                name: null,
+            }
+        }
+    },
 
     setStateData(key, timeTerm, data){
         this.userData[key][timeTerm] = data;
@@ -31,6 +75,7 @@ export const State = {
 
 const app = {
     parent: document.querySelector("#wrapper"),
+    resizeTimer: undefined,
 
     async start(){
         const isTokenCorrect = await apiCom("token:auth");
@@ -46,6 +91,12 @@ const app = {
     },
 
     onResizeWindow(){
+        document.body.classList.add("no-transition");
+        clearTimeout(this.resizeTimer);
+        this.resizeTimer = setTimeout(() => {
+            document.body.classList.remove("no-transition");
+        }, 200);
+
         Switch.updateSwitchMarker();
         updateNavMarker();
         updateArtistDivPosition();
