@@ -5,6 +5,7 @@ import { Selector } from "../../components/header/selector/selector.js";
 import { Switch } from "../../components/header/switch/switch.js";
 import { renderGenresPage } from "./genresPage/genresPage.js";
 import { renderMapPage } from "./mapPage/mapPage.js";
+import { renderMoodsPage } from "./moodsPage/moodsPage.js";
 
 export function renderStructure(parent){
     parent.innerHTML = `<header></header>
@@ -12,7 +13,7 @@ export function renderStructure(parent){
                             <section id="most-played-page" class="switch-button-needed"></section>
                             <section id="decades-page"></section>
                             <section id="genre-page"></section>
-                            <section id="habits-page"></section>
+                            <section id="moods-page"></section>
                             <section id="music-map-page"></section>
                             <section id="summary-page"></section>
                         </main>
@@ -21,19 +22,18 @@ export function renderStructure(parent){
     const mostPlayedPage = parent.querySelector("#most-played-page");
     const genrePage = parent.querySelector("#genre-page");
     const decadePage = parent.querySelector("#decades-page");
-    const habitsPage = parent.querySelector("#habits-page");
+    const moodsPage = parent.querySelector("#moods-page");
     const musicMapPage = parent.querySelector("#music-map-page");
     const summaryPage = parent.querySelector("#summary-page");
     const header = parent.querySelector("header");
     
     const pageDoms = parent.querySelectorAll("section");
-    renderHeader(header, pageDoms, habitsPage.id);
+    renderHeader(header, pageDoms);
     renderDecadePage(decadePage);
     renderMostPlayedPage(mostPlayedPage);
     renderGenresPage(genrePage);
     renderMapPage(musicMapPage);
-
-    
+    renderMoodsPage(moodsPage);
 }
 
 export function updateCurrentMainPage(pageValue, pageIndex){
