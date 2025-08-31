@@ -1,0 +1,28 @@
+#moods-page text{
+    fill: #8E8E8E;
+}
+
+#moods-page line{ 
+    stroke:#8E8E8E; 
+    stroke-dasharray: 9; 
+}
+
+#moods-page .radarArea{ 
+    fill: #D2AFFF; 
+    fill-opacity: 0.35; 
+    stroke: #D2AFFF; 
+    stroke-width: 1; 
+}
+
+#moods-page .radarChartLabel{ 
+    font-size: 1.1rem; 
+}
+#moods-page .gridCircle{ 
+    fill: none; stroke: #8E8E8E; 
+    stroke-dasharray: 9; 
+    stroke-dashoffset: 9;
+}
+
+#moods-page .radarCircles{
+    fill: #D2AFFF;
+}
