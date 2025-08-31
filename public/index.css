@@ -3,6 +3,7 @@
     --main-green-color: #1ED760;
     --main-purple-color: #BB87FE;
     
+    --dark-main-green-color:#0f682e;
     --menu-black-color: #000000;
     --green-bubble-color: #1ED7604D;
     --purple-bubble-dark-color:#8526FF4D;
@@ -31,12 +32,30 @@
     box-sizing: border-box;
 }
 
+html{
+    
+}
+
 body{
     margin: 0;
     background-color: var(--main-black-color);
     font-family: sans-serif;
     overflow: hidden;
 }
+
+body::before{
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(130deg,rgb(6, 4, 7) 10%, rgb(29, 20, 48) 100%);
+    z-index: -1;
+
+    /* transition: 300ms all ease-in-out; */
+}
+
+/* body.change::before{
+    filter: hue-rotate(60deg) brightness(100%);
+} */
 
 p,h1,h2,h3,h4{
     margin: 0;
@@ -56,6 +75,10 @@ main{
     width: 500vw;
 
     transition: transform 400ms linear;
+}
+
+.no-transition main {
+  transition: none;
 }
 
 section{
