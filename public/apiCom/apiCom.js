@@ -27,6 +27,13 @@ export async function apiCom(action, data){
             return resource; 
         }
 
+        case "song:get-features": {
+            options.method = "POST";
+            options.body = data;
+            const resource = await fetcher("/api/song-features", options, true);
+            return resource; 
+        }
+
         case "token-name:authorization": {
     /*         options.method = "GET";
             const resource = await fetcher(`../../api/user/?token=${encrypt(data.token)}&name=${encrypt(data.name)}`, options);
