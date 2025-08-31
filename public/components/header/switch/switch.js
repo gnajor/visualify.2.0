@@ -26,14 +26,9 @@ export class Switch{
     }
 
     static updateSwitchMarker(){
-         
         const element = document.querySelector("#most-played-page-switch.switch .marked");
-
         const switchContainer = document.querySelector("#most-played-page-switch.switch");
         const marker = document.querySelector("#most-played-page-switch #switch-marker")
-
-        console.log(switchContainer)
-
         updateMarker(element, switchContainer, marker);
     }
 
