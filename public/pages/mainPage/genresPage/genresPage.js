@@ -32,6 +32,13 @@ class BubbleChart{
         this.transitionDelay = 50;
         this.transitionDuration = 800;
 
+        this.colors = [
+            "#E3CCFF",
+            "#D2AFFF",
+            "#AD74F6",
+            "#9745FF"
+        ];
+
         this.init();
     }
 
@@ -104,7 +111,7 @@ class BubbleChart{
             .attr("id", d => d.data.genre)
 
         const genreLabel = bubbles.append("text")
-            .text((d) => d.data.genre)
+            .text((d) => this.formatGenreStr(d.data.genre))
             .attr("text-anchor", "middle")
             .attr("dy", "0.3em")
             .attr("fill", "black")
@@ -117,6 +124,8 @@ class BubbleChart{
 
         this.svg.selectAll(".bubble").on("mouseenter", function(event, d){
             const circle = d3.select(this).raise().select("circle")
+
+           /*  d3.select("body").classed("change", true); */
          
             circle.interrupt();
             d3.select(this).select("text").interrupt();
@@ -125,7 +134,7 @@ class BubbleChart{
                 .attr("r", hoverSize)
 
             circle.attr("fill", d => colorScale(d.data.value))
-            circle.style("filter", "hue-rotate(60deg)")
+            circle.style("filter", "contrast(200%)") /*  "hue-rotate(-125deg)"*/
 
             d3.select(this).select("text")
                 .attr("fill", "black")
@@ -134,11 +143,13 @@ class BubbleChart{
         });
 
         this.svg.selectAll(".bubble").on("mouseleave", function (event, d) {
+            /* d3.select("body").classed("change", false); */
+
             d3.select(this).select("circle")
                 .transition().duration(200)
                 .attr("r", d => d.r) 
                 .transition().duration(600)
-                .style("filter", "hue-rotate(0deg)")
+                .style("filter", "contrast(100%) brightness(100%)")
                 .attr("fill", d => colorScale(d.data.value))
 
 
@@ -160,12 +171,6 @@ class BubbleChart{
         const bubbles = nodes.enter().append("g")
             .attr('class', 'bubble')
             .attr('transform', d => `translate(${d.x + this.padding}, ${d.y + this.padding})`);
-  /*       
-        bubbles.style("opacity", 0)
-            .transition()
-            .delay((d, i) => i * this.transitionDelay) 
-            .duration(this.transitionDuration)
-            .style("opacity", 1); */
 
         bubbles.append("circle")
             .attr("r", 0)
@@ -174,12 +179,12 @@ class BubbleChart{
             .duration(this.transitionDuration)
             .delay((d, i) => i * this.transitionDelay) 
             .attr("r", d => d.r)
-            .attr("stroke", "gray")
+            .attr("stroke", "black")
             .attr("stroke-width",  1)
             .attr("fill", d => this.color(d.data.value))
 
         const genreLabel = bubbles.append("text")
-            .text((d) => d.data.genre)
+            .text((d) => this.formatGenreStr(d.data.genre))
             .attr("text-anchor", "middle")
             .attr("font-size", 0)
             .attr("dy", "0.3em")
@@ -199,10 +204,18 @@ class BubbleChart{
             .attr("fill", d => this.color(d.data.value))
 
         bubbleUpdate.select('text')
-            .text(d => d.data.genre)
+            .text(d => this.formatGenreStr(d.data.genre))
             .style('font-size', d => Math.min(2 * d.r / d.data.genre.length, d.r / 2) + "px");
 
         nodes.exit().remove();
         this.bindListeners();
+    }
+
+    formatGenreStr(str){
+        const firstChar = str[0];
+        const remainingLetters = str.substring(1)
+        const firstCharCap = firstChar.toUpperCase();
+
+        return firstCharCap + remainingLetters;
     }
 }
