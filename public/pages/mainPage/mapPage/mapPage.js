@@ -33,9 +33,22 @@ export function renderMapPage(parent){
         }
     });
 
+
     selectorInstance.event((event) => {
         map.changeData(dataset, event.target.value);
     }); 
+}
+
+function renderArtistsDivs(parent, ){
+    const artistParent = document.createElement("div");
+    artistParent.id = "artist-container";
+    parent.appendChild(artistParent);
+
+    artistParent.innerHTML = `<img src="">
+                              <div class="artist-title-name">
+                                   <h3 class="artitst-title">Top Artist</h3> 
+                                   <h3 class="artist-name"></h3>
+                              </div>`; /* country? */
 }
 
 class Map{
@@ -180,6 +193,8 @@ class Map{
         }    
     }
 
+
+
     async changeData(dataset, range){
         this.dataset = dataset[range];
         this.range = range;
@@ -197,6 +212,8 @@ class Map{
                 document.dispatchEvent(new CustomEvent("map:processing", {detail: {chartId: "map"}}));
                 await this.fetchAndSetColors();
                 document.dispatchEvent(new CustomEvent("map:done", {detail: {chartId: "map"}}));
+                console.log(this.dataset);
+                /* documet.dispatchEvent(new CustomEvent("map:done-send-data", {detail: this)) */
                 this.selectorInstance.enable();
             }
     }    
