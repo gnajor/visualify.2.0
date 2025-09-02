@@ -175,7 +175,7 @@ class BubbleChart{
         bubbles.append("circle")
             .attr("r", 0)
             .transition()
-            .ease(d3.easeElasticOut )
+            .ease(d3.easeElasticOut)
             .duration(this.transitionDuration)
             .delay((d, i) => i * this.transitionDelay) 
             .attr("r", d => d.r)
