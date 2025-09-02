@@ -85,7 +85,7 @@ class RadarChart{
             lilac: "#D2AFFF"
         }
 
-        this.wSvg =  800  
+        this.wSvg =  850  
         this.hSvg = 800; 
         this.hViz = this.hSvg - this.margin.bottom - this.margin.top;
         this.wViz = this.wSvg - this.margin.left - this.margin.right;
@@ -102,7 +102,7 @@ class RadarChart{
     async init(){
         this.svg = this.parent.append("svg")
             .attr("width", this.wSvg)
-            .attr("height", this.hSvg)
+            .attr("height", "100%")
             .attr("viewBox", `0 0 ${this.wSvg} ${this.hSvg}`)
             .classed("radarChart", true)
 
