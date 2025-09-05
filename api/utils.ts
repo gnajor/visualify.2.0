@@ -38,7 +38,7 @@ export async function getCountryFromWikdata(spotifyId: string): Promise<any | nu
 }
 
 export async function getSongFeatures(artist: string, title: string): Promise<any | null>{
-    const mbUrl = `https://musicbrainz.org/ws/2/recording/?query=artist:"${encodeURIComponent("Eminem")}"%20AND%20recording:"${encodeURIComponent("Stan")}"&fmt=json`;
+    const mbUrl = `https://musicbrainz.org/ws/2/recording/?query=artist:"${encodeURIComponent(artist)}"%20AND%20recording:"${encodeURIComponent(title)}"&fmt=json`;
     const mbResponse = await fetch(mbUrl);
     const mbData = await mbResponse.json();
 
