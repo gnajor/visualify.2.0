@@ -28,8 +28,6 @@ export function renderMostPlayedPage(parent){
         spiral.changeData(dataset[switchInstance.currentSwitchState][event.target.value]);
         renderDataDetails(dataDetailsContainer, dataset[switchInstance.currentSwitchState][selectorInstance.element.value]);
     }); 
-
-    
 }
 
 function renderDataDetails(parent, dataset){
@@ -41,6 +39,12 @@ function renderDataDetails(parent, dataset){
         itemContainer.id = `item-${item.ranking}`;
         itemContainer.className = "item-details";
 
+        const newDataset = [
+            {label: "filled", value: item.popularity},
+            {label: "empty", value: 100 - item.popularity} 
+        ]
+
+
         itemContainer.innerHTML += `<div class="item-name-ranking">
                                         <div class="item-ranking">${item.ranking}</div>
                                         <div class="item-name">${formatSongs(item.name)}</div>
@@ -50,17 +54,14 @@ function renderDataDetails(parent, dataset){
                                         <div class="popularity-title">Spotify Popularity</div> 
                                     </div>`;
         
-        const donutchart = new DonutChart(itemContainer.querySelector(".donut-chart"), item);
+        const donutchart = new DonutChart(itemContainer.querySelector(".donut-chart"), newDataset);
     }
 }
 
 class DonutChart{
     constructor(parent, dataset){
         this.parent = d3.select(parent);
-        this.dataset = [
-            {label: "filled", value: dataset.popularity},
-            {label: "empty", value: 100 - dataset.popularity} 
-        ];
+        this.dataset = dataset;
 
         this.wSvg = 100;
         this.hSvg = 100;
