@@ -1,6 +1,7 @@
 import { getMapData } from "../../../logic/utils.js";
 import { apiCom } from "../../../apiCom/apiCom.js";
 import { Selector } from "../../../components/header/selector/selector.js";
+import { State } from "../../../index.js";
 
 export function renderMapPage(parent){
     const dataset = getMapData();
@@ -19,8 +20,7 @@ export function renderMapPage(parent){
         if(event.detail.chartId === "moods" && event.detail.firstTime){
             document.dispatchEvent(new CustomEvent("map:processing", {detail: {chartId: "map"}}));
             await map.fetchAndSetColors();
-            selectorInstance.enable();
-            document.dispatchEvent(new CustomEvent("map:done", {detail: {chartId: "map"}}));
+            map.done();
         }
         else if(event.detail.chartId === "moods" && !event.detail.firstTime){
             selectorInstance.enable();
@@ -33,22 +33,28 @@ export function renderMapPage(parent){
         }
     });
 
-
     selectorInstance.event((event) => {
         map.changeData(dataset, event.target.value);
     }); 
+
+    const renderArtistsDivs = (dataset) => {
+        for(const item of dataset){
+            renderArtistsDiv(songContainer, item);
+        }
+    }
 }
 
-function renderArtistsDivs(parent, ){
+
+function renderArtistsDiv(parent, item){
     const artistParent = document.createElement("div");
     artistParent.id = "artist-container";
     parent.appendChild(artistParent);
 
-    artistParent.innerHTML = `<img src="">
+/*     artistParent.innerHTML = `<img src="">
                               <div class="artist-title-name">
                                    <h3 class="artitst-title">Top Artist</h3> 
                                    <h3 class="artist-name"></h3>
-                              </div>`; /* country? */
+                              </div>`;  */
 }
 
 class Map{
@@ -211,10 +217,21 @@ class Map{
                 this.selectorInstance.disable();
                 document.dispatchEvent(new CustomEvent("map:processing", {detail: {chartId: "map"}}));
                 await this.fetchAndSetColors();
-                document.dispatchEvent(new CustomEvent("map:done", {detail: {chartId: "map"}}));
-                console.log(this.dataset);
-                /* documet.dispatchEvent(new CustomEvent("map:done-send-data", {detail: this)) */
-                this.selectorInstance.enable();
+                this.done();
             }
-    }    
+    }
+    
+    done(){
+        document.dispatchEvent(new CustomEvent("map:done", {detail: {chartId: "map"}}));
+        /* documet.dispatchEvent(new CustomEvent("map:done-send-data", {detail: this)) */
+        this.selectorInstance.enable();
+
+        const mostListenedCountry = this.existingData[this.range].sort((a, b) => b.value - a.value)[0].country;
+        const mostListenedCountryCords = this.countries.find(country => this.formatCountryName(country.properties.name) === this.formatCountryName(mostListenedCountry));
+
+        State.setStateOverlayData("mostListenedCountry", this.range, {
+            "svg": mostListenedCountryCords,
+            "name": mostListenedCountry
+        });
+    }
 }
