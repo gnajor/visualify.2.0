@@ -64,6 +64,7 @@ class Map{
         this.range = range;
         this.dataset = dataset[range];
 
+
         this.existingData = {
             "short_term": [],
             "medium_term": [],
