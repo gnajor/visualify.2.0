@@ -66,8 +66,13 @@ export function getDecadeData(){
         formatted[timeTerm].push({
             decade: false,
             amount: false,
-        })
+        });
+
+        const mostListenedDecade = formatted[timeTerm].toSorted((a, b) => b.amount - a.amount)[0].decade;
+        State.setStateOverlayData("mostListenedDecade", timeTerm, mostListenedDecade);
     });
+
+
     return formatted;
 }
 
@@ -80,7 +85,19 @@ export function getMostPlayedData(){
     formatted.tracks = {};
         
     for(const range of ranges){
+        let artistPopularitySum = 0;
+        let trackPopularitySum = 0;
+
         formatted.artists[range] = State.userData.artists[range].map((artist, i) => {
+            if(i === 0){
+                State.setStateOverlayData("mostListenedArtist", range, {
+                    image: artist?.images[0]?.url,
+                    name: artist.name,
+                });
+            }
+
+            artistPopularitySum += artist.popularity;
+
             return {
                 name: artist.name,
                 image: artist?.images[0]?.url,
@@ -90,6 +107,15 @@ export function getMostPlayedData(){
         });
 
         formatted.tracks[range] = State.userData.tracks[range].map((track, i) => {
+            if(i === 0){
+                State.setStateOverlayData("mostListenedTrack", range, {
+                    image: track.album.images[0].url,
+                    name: track.name,
+                });
+            }
+
+            trackPopularitySum += track.popularity;
+
             return {
                 name: track.name,
                 image: track.album.images[0].url,
@@ -98,9 +124,16 @@ export function getMostPlayedData(){
             }
         });
 
-        formatted.artists[range].slice(0, 50);
-        formatted.tracks[range].slice(0, 50);
+        const avgTrackPopularity = Number((trackPopularitySum / State.userData.tracks[range].length));
+        const avgArtistPopularity = Number((artistPopularitySum / State.userData.artists[range].length));
+        
+        State.setStateOverlayData("avgTrackPopularity", range, avgTrackPopularity);
+        State.setStateOverlayData("avgArtistPopularity", range, avgArtistPopularity);
+
+        formatted.artists[range].slice(0, amount);
+        formatted.tracks[range].slice(0, amount);
     }
+    
     return formatted;
 }
 
@@ -126,8 +159,12 @@ export function getGenreData(){
                 }
             });
         }
-        formatted[range] = genres.sort((firstItem, secItem) => secItem.value - firstItem.value).slice(0, 50);
+
+        const sortedSliced = genres.sort((firstItem, secItem) => secItem.value - firstItem.value).slice(0, 50);
+        State.setStateOverlayData("mostListenedGenre", range, sortedSliced[0].genre);
+        formatted[range] = sortedSliced;
     }    
+
     return formatted;
 }
 
