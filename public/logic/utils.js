@@ -176,9 +176,9 @@ export function getMapData(){
     for(const range of ranges){
         const data = [];
 
-        console.log(range)
-
         for(const artist of State.userData.artists[range]){
+            console.log(State.userData.artists)
+
             const mapData = {
                 "name": artist.name,
                 "id": artist.id
