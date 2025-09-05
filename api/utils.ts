@@ -42,6 +42,9 @@ export async function getSongFeatures(artist: string, title: string): Promise<an
     const mbResponse = await fetch(mbUrl);
     const mbData = await mbResponse.json();
 
+    console.log(mbResponse);
+    console.log(mbData);
+
     if(mbData.error){
         await sleep(5000);
         await getSongFeatures(artist, title);
