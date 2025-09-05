@@ -48,6 +48,7 @@ export async function getSongFeatures(artist: string, title: string): Promise<an
     }
 
     if(!mbData.recordings || mbData.recordings.length === 0){
+        console.log(mbData);
         return null;
     }
 
