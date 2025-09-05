@@ -41,7 +41,6 @@ export async function getSongFeatures(artist: string, title: string): Promise<an
     const mbUrl = `https://musicbrainz.org/ws/2/recording/?query=artist:"${encodeURIComponent(artist)}"%20AND%20recording:"${encodeURIComponent(title)}"&fmt=json`;
     const mbResponse = await fetch(mbUrl);
     const mbData = await mbResponse.json();
-    await sleep(10000);
 
     if(mbData.error){
         await sleep(5000);
