@@ -186,7 +186,7 @@ export function getMapData(){
 
             data.push(mapData);
         }
-        if(data.length >= 70) formatted[range] = data.slice(0, 70);
+        formatted[range] = data.slice(0, 70);
     }
     
     return formatted;
