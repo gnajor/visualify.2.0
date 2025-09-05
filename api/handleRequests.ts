@@ -76,7 +76,7 @@ export async function handleRequests(request: Request): Promise<Response>{
         const spotifyId = data.spotifyId;
         const artistName = data.artistName;
         const wikidataCountry = await getCountryFromWikdata(spotifyId);
-        await sleep(500); //1000 => (65/77) (82/100) 
+        await sleep(500); 
         const responseData: Record<string, any> = {};
 
         

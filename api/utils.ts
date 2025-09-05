@@ -58,6 +58,7 @@ export async function getSongFeatures(artist: string, title: string): Promise<an
     const abData = await abResponse.json();
 
     if(abData.message === "Not found"){
+        console.log(abData)
         return null
     }
 

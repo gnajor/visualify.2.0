@@ -5,7 +5,6 @@ import { State } from "../../../index.js";
 
 export function renderMapPage(parent){
     const dataset = getMapData();
-    console.log(dataset);
     const diagramContainer = document.createElement("div");
     const songContainer = document.createElement("div");
     diagramContainer.className = "diagram-container";
@@ -128,8 +127,6 @@ class Map{
     }
 
     async fetchAndSetColors(){
-        console.log(this.dataset);
-
         for(const artist of this.dataset){
             const data = await apiCom("song:get-country", {spotifyId: artist.id, artistName: artist.name})
             this.formatArtistCountryItem(data, artist.name);
