@@ -10,7 +10,7 @@ import { renderStructure } from "./pages/mainPage/structure.js";
 
 export const State = {
     clientId: "aa99b24e94d448eab167b514b89f2de2",
-    redirectUri: /* "https://visualify.deno.dev/" */"http://127.0.0.1:8888/",
+    redirectUri: "https://visualify.deno.dev/"/* "http://127.0.0.1:8888/" */,
     userData: {
         artists:{
             short_term: null,
@@ -25,10 +25,14 @@ export const State = {
     },
     overlayData: {
         short_term: {
-            avgPopularity: null,
-            mostListenedCountry: null,
+            avgTrackPopularity: null,
+            avgArtistPopularity: null,
             mostListenedGenre: null,
             mostListenedDecade: null,
+            mostListenedCountry: {
+                svg: null,
+                name: null,
+            },
             mostListenedTrack: {
                 image: null,
                 name: null,
@@ -39,10 +43,14 @@ export const State = {
             }
         },
         medium_term: {
-            avgPopularity: null,
-            mostListenedCountry: null,
+            avgTrackPopularity: null,
+            avgArtistPopularity: null,
             mostListenedGenre: null,
             mostListenedDecade: null,
+            mostListenedCountry: {
+                svg: null,
+                name: null,
+            },
             mostListenedTrack: {
                 image: null,
                 name: null,
@@ -53,10 +61,14 @@ export const State = {
             }
         },
         long_term: {
-            avgPopularity: null,
-            mostListenedCountry: null,
+            avgTrackPopularity: null,
+            avgArtistPopularity: null,
             mostListenedGenre: null,
             mostListenedDecade: null,
+            mostListenedCountry: {
+                svg: null,
+                name: null,
+            },
             mostListenedTrack: {
                 image: null,
                 name: null,
@@ -71,6 +83,10 @@ export const State = {
     setStateData(key, timeTerm, data){
         this.userData[key][timeTerm] = data;
     },
+
+    setStateOverlayData(key, timeTerm, data){
+        this.overlayData[timeTerm][key] = data; 
+    }
 }
 
 const app = {
