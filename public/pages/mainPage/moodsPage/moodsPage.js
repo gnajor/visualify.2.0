@@ -1,6 +1,6 @@
 import { apiCom } from "../../../apiCom/apiCom.js";
 import { Selector } from "../../../components/header/selector/selector.js";
-import { getMoodsChartData } from "../../../logic/utils.js";
+import { getMoodsChartData, formatSongs} from "../../../logic/utils.js";
 
 export function renderMoodsPage(parent){
     const dataset = getMoodsChartData();
@@ -189,7 +189,7 @@ class RadarChart{
 
     async fetchTrackFeature(){
         for(const track of this.dataset){
-            const data = await apiCom("song:get-features", {"artist": track.artist, "title": track.title});
+            const data = await apiCom("song:get-features", {"artist": track.artist, "title": formatSongs(track.title)});
             this.formatTrackFeatures(data);
         }
     }

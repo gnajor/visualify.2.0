@@ -62,6 +62,9 @@ export async function getSongFeatures(artist: string, title: string): Promise<an
         console.log(abData)
         return null
     }
+    else{
+        console.log(abData)
+    }
 
     const features = {
         "danceability": abData.highlevel?.danceability?.all?.danceable,
