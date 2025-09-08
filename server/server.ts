@@ -19,4 +19,4 @@ export function serverRequests(request: Request){
     });
 }
 
-Deno.serve(/* { port: 8888, hostname: "127.0.0.1" }, */ serverRequests);
+Deno.serve({ port: 8888, hostname: "127.0.0.1" }, serverRequests);

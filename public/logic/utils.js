@@ -171,14 +171,11 @@ export function getGenreData(){
 export function getMapData(){
     const ranges = Object.keys(State.userData.artists);
     const formatted = {};
-    console.log(ranges)
 
     for(const range of ranges){
         const data = [];
 
         for(const artist of State.userData.artists[range]){
-            console.log(State.userData.artists)
-
             const mapData = {
                 "name": artist.name,
                 "id": artist.id

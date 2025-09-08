@@ -38,7 +38,41 @@ export async function getCountryFromWikdata(spotifyId: string): Promise<any | nu
 }
 
 export async function getSongFeatures(artist: string, title: string): Promise<any | null>{
-    const mbUrl = `https://musicbrainz.org/ws/2/recording/?query=artist:"${encodeURIComponent(artist)}"%20AND%20recording:"${encodeURIComponent(title)}"&fmt=json`;
+    const apiKey = Deno.env.get("CEREBRAS_API_KEY");
+    console.log(apiKey)
+
+    if (!apiKey) {
+        throw new Error("API key is missing");
+    }
+
+    const start = `Choose 4 of these moods that matches the song the most: Uplifting, Joyful, Energetic, Playful, Chill, Calm, Relaxing, 
+                    Melancholic, Sad, Nostalgic, Dark, Haunting, Angry, Aggressive, 
+                    Intense, Hopeful, Romantic, Sensual, Dreamy, Reflective, Inspirational, Euphoric, Lonely, Heartbreaking, Peaceful, Mysterious `;
+
+    const songStr = `song: ${title} by ${artist}`;
+
+    const response = await fetch("https://api.cerebras.ai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            model: "llama-4-scout-17b-16e-instruct",
+            messages: [
+                { role: "user", content: start + songStr},
+            ],
+        }),
+    });
+
+    const data = await response.json();
+
+    if(data.choices[0].message)
+
+    console.log(data);
+
+
+/*     const mbUrl = `https://musicbrainz.org/ws/2/recording/?query=artist:"${encodeURIComponent(artist)}"%20AND%20recording:"${encodeURIComponent(title)}"&fmt=json`;
     const mbResponse = await fetch(mbUrl);
     const mbData = await mbResponse.json();
 
@@ -73,7 +107,7 @@ export async function getSongFeatures(artist: string, title: string): Promise<an
         "sad": abData.highlevel?.mood_sad?.all?.sad,
         "acoustic": abData.highlevel?.mood_acoustic?.all?.acoustic
     }
-    return features;
+    return features; */
 }
 
 export async function getCountryFromMusicBrainz(artistName: string): Promise<string | null>{
