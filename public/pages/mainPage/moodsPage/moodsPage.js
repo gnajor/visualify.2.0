@@ -2,9 +2,16 @@ import { apiCom } from "../../../apiCom/apiCom.js";
 import { Selector } from "../../../components/header/selector/selector.js";
 import { getMoodsChartData, formatSongs} from "../../../logic/utils.js";
 
-export function renderMoodsPage(parent){
+export async function renderMoodsPage(parent){
     const dataset = getMoodsChartData();
-    const startingDataset = [
+
+    const diagramContainer = document.createElement("div");
+    diagramContainer.className = "diagram-container";
+    parent.appendChild(diagramContainer);
+
+    const wordCloud = new WordCloud(diagramContainer, dataset, "short_term");
+    
+/*     const startingDataset = [
         {
             "title": "Danceability",
             "value": 0,
@@ -25,13 +32,9 @@ export function renderMoodsPage(parent){
             "title": "Sad",
             "value": 0,
         }
-    ]; 
+    ];  */
 
-    const diagramContainer = document.createElement("div");
-    diagramContainer.className = "diagram-container";
-    parent.appendChild(diagramContainer);
-
-    const selectorInstance = Selector.getSelectorByPageId(parent.id);
+/*     const selectorInstance = Selector.getSelectorByPageId(parent.id);
     const radarChart = new RadarChart(diagramContainer, dataset, "short_term", startingDataset, selectorInstance);
 
     document.addEventListener("map:processing", (event) => {
@@ -48,7 +51,101 @@ export function renderMoodsPage(parent){
 
     selectorInstance.event((event) => {
         radarChart.changeData(dataset, event.target.value);
-    }); 
+    });  */
+}
+
+class WordCloud{
+    constructor(parent, dataset, range){
+        this.range = range;
+        this.dataset = dataset[range];
+        this.parent = d3.select(parent);
+
+        this.existingData = {
+            "short_term": [],
+            "medium_term": [],
+            "long_term": []
+        } 
+
+        this.hSvg = 800;
+        this.wSvg = 1000;
+        this.padding = 9;
+
+        this.init();
+    }
+
+    async init(){
+        this.svg = this.parent.append("svg")
+            .attr("width", this.wSvg)
+            .attr("height", "100%")
+            .attr("viewBox", `0 0 ${this.wSvg} ${this.hSvg}`)
+            .classed("word-cloud", true);
+
+        await this.fetchTracksFeatures();
+        this.prepScales();
+    }
+
+    async fetchTracksFeatures(){
+        const data = await apiCom("songs:get-features", this.dataset);
+        this.existingData[this.range] = this.formatDataset(data.resource);
+    }
+
+    formatDataset(data){
+        const moods = [];
+
+        for(const track of data){
+            track.moods.forEach((mood) => {
+                const exists = moods.find(moodsItem => moodsItem.text === mood);
+
+                if(exists){
+                    exists.size++;
+                }
+                else{
+                    moods.push({
+                        "text": mood,
+                        "size": 1
+                    });
+                }
+            });
+        }
+
+        return moods;
+    }
+
+        prepScales() {
+              const words = this.existingData[this.range];
+
+  // find min and max counts
+  const extent = d3.extent(words, d => d.size);
+
+            const fontSizeScale = d3.scaleLinear()
+                .domain(extent)
+                .range([20, 70]);
+
+            this.layout = d3.layout.cloud()
+                .size([this.wSvg, this.hSvg])
+                .words(this.existingData[this.range])
+                .padding(this.padding)
+                .rotate(() => ~~(Math.random() * 2) * 90)
+                .fontSize(d => fontSizeScale(d.size))
+                .on("end", words => this.render(words));
+            this.layout.start();
+    }
+
+    render(words) {
+        console.log(this)
+
+        this.svg.append("g")
+            .attr("transform", `translate(${this.layout.size()[0] / 2}, ${this.layout.size()[1] / 2})`)
+            .selectAll("text")
+            .data(words)
+            .enter()
+            .append("text")
+            .attr("font-size", d => d.size)
+            .attr("fill", "white")
+            .attr("text-anchor", "middle")
+            .attr("transform", d => `translate(${d.x}, ${d.y})rotate(${d.rotate})`)
+            .text(d => d.text); 
+    }
 }
 
 class RadarChart{
@@ -115,7 +212,7 @@ class RadarChart{
         this.renderPolygonDots();
         this.renderPolygon();
         this.selectorInstance.disable();
-        await this.fetchTrackFeature();
+        await this.fetchTracksFeatures();
         this.selectorInstance.enable();
         document.dispatchEvent(new CustomEvent("radar:done", {detail: {chartId: "moods", firstTime: true}}));
     }
@@ -187,11 +284,11 @@ class RadarChart{
                 .attr("r", 5);
     }
 
-    async fetchTrackFeature(){
-        for(const track of this.dataset){
-            const data = await apiCom("song:get-features", {"artist": track.artist, "title": formatSongs(track.title)});
-            this.formatTrackFeatures(data);
-        }
+    async fetchTracksFeatures(){
+        const data = await apiCom("songs:get-features", this.dataset);
+        /* this.formatTrackFeatures(data); */
+        console.log(data);
+
     }
 
     formatTrackFeatures(data){
@@ -348,7 +445,7 @@ class RadarChart{
         else{
             this.selectorInstance.disable();
             document.dispatchEvent(new CustomEvent("radar:processing", {detail: {chartId: "moods"}}));
-            await this.fetchTrackFeature();
+            await this.fetchTracksFeatures();
             document.dispatchEvent(new CustomEvent("radar:done", {detail: {chartId: "moods", firstTime: false}}));
             this.selectorInstance.enable();
         }
