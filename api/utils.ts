@@ -1,4 +1,5 @@
 import { getCookies, setCookie } from "jsr:@std/http/cookie";
+import "jsr:@std/dotenv/load";
 
 export function sleep(ms: number): Promise<Function>{
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -37,19 +38,24 @@ export async function getCountryFromWikdata(spotifyId: string): Promise<any | nu
     return bindings[0].countryLabel.value;
 }
 
-export async function getSongFeatures(artist: string, title: string): Promise<any | null>{
+export async function getSongsFeatures(songs: Array<any>): Promise<any | null>{
     const apiKey = Deno.env.get("CEREBRAS_API_KEY");
-    console.log(apiKey)
 
     if (!apiKey) {
         throw new Error("API key is missing");
     }
 
-    const start = `Choose 4 of these moods that matches the song the most: Uplifting, Joyful, Energetic, Playful, Chill, Calm, Relaxing, 
+    const instructions = `Choose 4 of these moods that matches the songs the most and do this for each song Uplifting, Joyful, Energetic, Playful, Chill, Calm, Relaxing, 
                     Melancholic, Sad, Nostalgic, Dark, Haunting, Angry, Aggressive, 
-                    Intense, Hopeful, Romantic, Sensual, Dreamy, Reflective, Inspirational, Euphoric, Lonely, Heartbreaking, Peaceful, Mysterious `;
+                    Intense, Hopeful, Romantic, Sensual, Dreamy, Reflective, Inspirational, Euphoric, Lonely, Heartbreaking, Peaceful and Mysterious.`;
 
-    const songStr = `song: ${title} by ${artist}`;
+    let songsStr = "The songs and artists: ";
+    const lastInstruction = "format it into json arrays and objects like this: [{track, artist, moods = []}] but don't have any enters or spaces like that send it only in one row, also just show the data, for example a title is not needed";
+
+    for(const song of songs){
+        songsStr += `${song.title} by ${song.artist}, `;
+    }
+
 
     const response = await fetch("https://api.cerebras.ai/v1/chat/completions", {
         method: "POST",
@@ -60,16 +66,20 @@ export async function getSongFeatures(artist: string, title: string): Promise<an
         body: JSON.stringify({
             model: "llama-4-scout-17b-16e-instruct",
             messages: [
-                { role: "user", content: start + songStr},
+                { role: "user", content: instructions + songsStr + lastInstruction},
             ],
         }),
     });
 
     const data = await response.json();
 
-    if(data.choices[0].message)
+    if(data.choices[0].message.content){
+        return JSON.parse(data.choices[0].message.content);
+    }
+    else{
+        return null;
+    }
 
-    console.log(data);
 
 
 /*     const mbUrl = `https://musicbrainz.org/ws/2/recording/?query=artist:"${encodeURIComponent(artist)}"%20AND%20recording:"${encodeURIComponent(title)}"&fmt=json`;
@@ -278,4 +288,3 @@ async function refreshAccessToken(refreshToken: string): Promise<null | { access
         return null;
     }    
 }
-

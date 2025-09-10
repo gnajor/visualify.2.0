@@ -1,4 +1,4 @@
-import { authSpotifyUser, getCountryFromMusicBrainz, getCountryFromWikdata, getSongFeatures, handleLogout, setToken, sleep } from "./utils.ts";
+import { authSpotifyUser, getCountryFromMusicBrainz, getCountryFromWikdata, getSongsFeatures, handleLogout, setToken, sleep } from "./utils.ts";
 
 let musicbrainzErrors: number = 0;
 let wikidataErrors: number = 0;
@@ -102,19 +102,9 @@ export async function handleRequests(request: Request): Promise<Response>{
         return new Response(JSON.stringify(responseData), {status: 200});
     }
 
-    if(pathname === "/api/song-features" && request.method === "POST"){
+    if(pathname === "/api/songs-features" && request.method === "POST"){
         const data = await request.json();
-        const title = data.title;
-        const artist = data.artist;
-
-        const abdata = await getSongFeatures(artist, title); 
-        await sleep(500); 
-
-        if(abdata === null){
-            musicbrainzErrors++;
-        }
-
-        console.log(musicbrainzErrors);
+        const abdata = await getSongsFeatures(data); 
         return new Response(JSON.stringify(abdata), {status: 200});
     }
 

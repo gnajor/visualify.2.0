@@ -204,7 +204,7 @@ export function getMoodsChartData(){
 
             data.push(moodsData);
         }
-        formatted[range] = data.slice(0, 25);
+        formatted[range] = data.slice(0, 50);
     }
     return formatted;
 }

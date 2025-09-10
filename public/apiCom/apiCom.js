@@ -27,10 +27,10 @@ export async function apiCom(action, data){
             return resource; 
         }
 
-        case "song:get-features": {
+        case "songs:get-features": {
             options.method = "POST";
             options.body = data;
-            const resource = await fetcher("/api/song-features", options, true);
+            const resource = await fetcher("/api/songs-features", options, true);
             return resource; 
         }
 
