@@ -45,12 +45,13 @@ export async function getSongsFeatures(songs: Array<any>): Promise<any | null>{
         throw new Error("API key is missing");
     }
 
-    const instructions = `Choose 4 of these moods that matches the songs the most and do this for each song Uplifting, Joyful, Energetic, Playful, Chill, Calm, Relaxing, 
+/* `Choose 4 of these moods that matches the songs the most and do this for each song Uplifting, Joyful, Energetic, Playful, Chill, Calm, Relaxing, 
                     Melancholic, Sad, Nostalgic, Dark, Haunting, Angry, Aggressive, 
-                    Intense, Hopeful, Romantic, Sensual, Dreamy, Reflective, Inspirational, Euphoric, Lonely, Heartbreaking, Peaceful and Mysterious.`;
+                    Intense, Hopeful, Romantic, Sensual, Dreamy, Reflective, Inspirational, Euphoric, Lonely, Heartbreaking, Peaceful and Mysterious.`;*/
+
+    const instructions = `I want you to analyze the overall mood/feel of these songs one by one. Choose the top 2 categories from this list that best describe each song: Happy, Sad, Energy, Calm, Danceability. Do NOT invent new categories. Return ONLY valid JSON in one line, formatted like this: [{"track": "Song Title 1", "artist": "Artist Name", "moods": ["Mood1","Mood2"]},{"track": "Song Title 2", "artist": "Artist Name", "moods": ["Mood1","Mood2"]}] Do not add any extra text, comments, or line breaks.`;
 
     let songsStr = "The songs and artists: ";
-    const lastInstruction = "format it into json arrays and objects like this: [{track, artist, moods = []}] but don't have any enters or spaces like that send it only in one row, also just show the data, for example a title is not needed";
 
     for(const song of songs){
         songsStr += `${song.title} by ${song.artist}, `;
@@ -66,14 +67,19 @@ export async function getSongsFeatures(songs: Array<any>): Promise<any | null>{
         body: JSON.stringify({
             model: "llama-4-scout-17b-16e-instruct",
             messages: [
-                { role: "user", content: instructions + songsStr + lastInstruction},
+                { role: "user", content: instructions + songsStr},
             ],
+            max_tokens: 2000,          // allow a long answer
+            temperature: 0.2,          // lower = more careful
+            top_p: 0.9  
         }),
     });
 
     const data = await response.json();
+    console.log(data);
 
     if(data.choices[0].message.content){
+        data.choices[0].message.content.replace(/\n/g, "");
         return JSON.parse(data.choices[0].message.content);
     }
     else{
