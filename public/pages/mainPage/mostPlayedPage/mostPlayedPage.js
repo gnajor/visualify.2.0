@@ -119,6 +119,7 @@ class Spiral{
     constructor(parentSelector, dataset){
         this.parent = d3.select(parentSelector);
         this.dataset = dataset.slice(0, 25).reverse();
+        this.min = 25;
 
         this.wSvg = 1200;
         this.hSvg = 900;
@@ -138,6 +139,7 @@ class Spiral{
             .attr("height", "auto")
             .classed("spiral-chart", true)
 
+        if(this.dataset.length < this.min) this.datasetTooShort();
         this.prepScales();
         this.prepDataset();
         this.renderClipPaths();
@@ -158,12 +160,23 @@ class Spiral{
             .range([startRadius, endRadius])  //65 - 25
     }
 
+    datasetTooShort(){
+        for(let i = this.dataset.length; i < this.min; i++){
+            this.dataset.unshift({
+                image: "../../../media/icons/not-found.svg",
+                name: "not-found",
+                popularity: 0,
+                ranking: i + 1,
+            });
+        }
+    }
+
     prepDataset(){
         this.dataset = this.dataset.map((item, i) => {
             const {image, name, popularity, ranking} = item;
             
             const θ = - (i * 0.36 + 5);
-            const r = this.b * θ;  
+            const r = this.b * θ;
 
             return {
                 image,
@@ -174,7 +187,7 @@ class Spiral{
                 y: this.cy + r * Math.sin(θ + 1.2),
                 r: this.rScale(ranking)
             }
-        })
+        });
     }
 
     renderClipPaths(){
@@ -268,6 +281,7 @@ class Spiral{
 
     changeData(dataset){
         this.dataset = dataset.slice(0, 25).reverse();
+        if(this.dataset.length < this.min) this.datasetTooShort();
         this.prepDataset();
 
         const imageGroups = this.svg.selectAll(".image-group")

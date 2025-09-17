@@ -82,7 +82,7 @@ class Map{
         this.render();
         this.selectorInstance.disable();
         await this.fetchAndSetColors();
-        map.done();
+        this.done();
     }
 
     async prepCountryData(){
