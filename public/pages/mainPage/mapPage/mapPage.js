@@ -15,23 +15,6 @@ export function renderMapPage(parent){
     const selectorInstance = Selector.getSelectorByPageId(parent.id);
     const map = new Map(diagramContainer, dataset, "short_term", selectorInstance);
 
-    document.addEventListener("radar:done", async (event) => {
-        if(event.detail.chartId === "moods" && event.detail.firstTime){
-            document.dispatchEvent(new CustomEvent("map:processing", {detail: {chartId: "map"}}));
-            await map.fetchAndSetColors();
-            map.done();
-        }
-        else if(event.detail.chartId === "moods" && !event.detail.firstTime){
-            selectorInstance.enable();
-        }
-    });
-
-    document.addEventListener("radar:processing", async (event) => {
-        if(event.detail.chartId === "moods"){
-            selectorInstance.disable();
-        }
-    });
-
     selectorInstance.event((event) => {
         map.changeData(dataset, event.target.value);
     }); 
@@ -98,6 +81,8 @@ class Map{
         this.prepScales();
         this.render();
         this.selectorInstance.disable();
+        await this.fetchAndSetColors();
+        map.done();
     }
 
     async prepCountryData(){

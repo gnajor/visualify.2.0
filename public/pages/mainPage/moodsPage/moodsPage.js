@@ -9,15 +9,19 @@ export async function renderMoodsPage(parent){
     diagramContainer.className = "diagram-container";
     parent.appendChild(diagramContainer);
 
-    const wordCloud = new WordCloud(diagramContainer, dataset, "short_term");
+/*     const wordCloud = new WordCloud(diagramContainer, dataset, "short_term"); */
     
-/*     const startingDataset = [
+    const startingDataset = [
+        {
+            "title": "Energy",
+            "value": 0,
+        }, 
         {
             "title": "Danceability",
             "value": 0,
         }, 
         {
-            "title": "Energy",
+            "title": "Sad",
             "value": 0,
         }, 
         {
@@ -25,33 +29,17 @@ export async function renderMoodsPage(parent){
             "value": 0,
         }, 
         {
-            "title": "Accoustic",
-            "value": 0,
-        }, 
-        {
-            "title": "Sad",
+            "title": "Calm",
             "value": 0,
         }
-    ];  */
+    ]; 
 
-/*     const selectorInstance = Selector.getSelectorByPageId(parent.id);
+    const selectorInstance = Selector.getSelectorByPageId(parent.id);
     const radarChart = new RadarChart(diagramContainer, dataset, "short_term", startingDataset, selectorInstance);
-
-    document.addEventListener("map:processing", (event) => {
-        if(event.detail.chartId === "map"){
-            selectorInstance.disable();
-        }
-    });
-
-    document.addEventListener("map:done", () => {
-        if(event.detail.chartId === "map"){
-            selectorInstance.enable();
-        }
-    })
 
     selectorInstance.event((event) => {
         radarChart.changeData(dataset, event.target.value);
-    });  */
+    }); 
 }
 
 class WordCloud{
@@ -157,18 +145,9 @@ class RadarChart{
         this.selectorInstance = selectorInstance;
 
         this.existingData = {
-            "short_term": {
-                "data": [],
-                "counter": undefined
-            },
-            "medium_term": {
-                "data": [],
-                "counter": undefined
-            },
-            "long_term": {
-                "data": [],
-                "counter": undefined
-            }
+            "short_term": {},
+            "medium_term": {},
+            "long_term": {}
         } 
 
         this.margin = {
@@ -286,46 +265,32 @@ class RadarChart{
 
     async fetchTracksFeatures(){
         const data = await apiCom("songs:get-features", this.dataset);
-        /* this.formatTrackFeatures(data); */
-        console.log(data);
-
+        this.formatTrackFeatures(data.resource);
     }
 
     formatTrackFeatures(data){
-        if(data.resource !== null && data.ok){
-            data = data.resource;
+        const moods = this.startingDataset.map(item => item);
 
-            for(const key in data){
-                if(data[key].toString().includes("e")){
-                    data[key] = 0.0001;
+        for(const track of data){
+            track.moods.forEach((mood) => {
+                const exists = moods.find(moodsItem => moodsItem.title === mood);
+
+                if(exists){
+                    exists.value++;
                 }
-            }
-
-            if(this.existingData[this.range]?.counter){ 
-                for(const key in data){
-                    const existingData = this.existingData[this.range];
-                    const obj = existingData.data.find(item => item.title === key);
-                    const index = existingData.data.findIndex(item => item.title === key);
-
-                    const sum = obj.value * existingData.counter;
-                    const newSum = sum + data[key];
-                    const newAvg = newSum / (existingData.counter + 1);
-
-                    this.existingData[this.range].data[index].value = newAvg
+                else{
+                    console.error("something went wrong");
                 }
-                this.existingData[this.range].counter++;
-            }
-            else{
-                for(const key in data){
-                    this.existingData[this.range].data.push({
-                        "title": key,
-                        "value": data[key]
-                    });
-                    this.existingData[this.range].counter = 1;
-                }
-            }
-            this.updateData(this.existingData[this.range].data);
+            });
         }
+
+        for(const item of moods){
+            item.value = item.value / data.length;
+        }
+
+        this.existingData[this.range] = moods;
+        console.log(moods)
+        this.updateData(moods);
     }
 
     getDotY(d, i){
