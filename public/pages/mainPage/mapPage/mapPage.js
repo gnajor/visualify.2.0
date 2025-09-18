@@ -5,6 +5,8 @@ import { State } from "../../../index.js";
 
 export function renderMapPage(parent){
     const dataset = getMapData();
+    console.log(dataset);
+
     const diagramContainer = document.createElement("div");
     const songContainer = document.createElement("div");
     diagramContainer.className = "diagram-container";
@@ -19,24 +21,29 @@ export function renderMapPage(parent){
         map.changeData(dataset, event.target.value);
     }); 
 
-    const renderArtistsDivs = (dataset) => {
-        for(const item of dataset){
-            renderArtistsDiv(songContainer, item);
-        }
-    }
+    document.addEventListener("map:done-send-data", function renderArtistsDivs(event){
+        const dataset = event.detail;
+
+        dataset.forEach((item, i) => {
+            renderArtistsDiv(songContainer, item, i);
+        });
+    });
 }
 
 
-function renderArtistsDiv(parent, item){
+function renderArtistsDiv(parent, item, index){
     const artistParent = document.createElement("div");
-    artistParent.id = "artist-container";
+    artistParent.classList.add("artist-container");
+    artistParent.id = item.country;
     parent.appendChild(artistParent);
 
-/*     artistParent.innerHTML = `<img src="">
+    console.log(item);
+
+    artistParent.innerHTML = `<img src="${item.image}">
                               <div class="artist-title-name">
                                    <h3 class="artitst-title">Top Artist</h3> 
-                                   <h3 class="artist-name"></h3>
-                              </div>`;  */
+                                   <h3 class="artist-name">${item.name}</h3>
+                              </div>`; 
 }
 
 class Map{
@@ -114,25 +121,26 @@ class Map{
     async fetchAndSetColors(){
         for(const artist of this.dataset){
             const data = await apiCom("song:get-country", {spotifyId: artist.id, artistName: artist.name})
-            this.formatArtistCountryItem(data, artist.name);
+            this.formatArtistCountryItem(data, artist);
         }
     }
 
     formatArtistCountryItem(data, artist){
         if(data.ok && data.resource){
             if(data.resource.result){
-                const country = data.resource.result;
+                const country = this.formatCountryName(data.resource.result);
                 const exists = this.existingData[this.range].find(item => item.country === country);
-                let newCountry = null
+                let newCountry = null;
 
                 if(exists){
                     exists.value++;
-                    newCountry = exists
+                    newCountry = exists;
                 }
                 else{
                     newCountry = {
-                        "country": country,
-                        "name": artist,
+                        "image": artist.image,
+                        "country": this.formatCountryName(country),
+                        "name": artist.name,
                         "value": 1
                     }
                     this.existingData[this.range].push(newCountry);
@@ -146,7 +154,7 @@ class Map{
     updateCountryColor(countryObj){
         const max = d3.max(this.existingData[this.range].map(item => item.value))
         const min = d3.min(this.existingData[this.range].map(item => item.value))
-        const countryName = this.formatCountryName(countryObj.country);
+        const countryName = countryObj.country;
         const countryValue = countryObj.value;
 
         const color = d3.scaleSequential()
@@ -208,7 +216,7 @@ class Map{
     
     done(){
         document.dispatchEvent(new CustomEvent("map:done", {detail: {chartId: "map"}}));
-        /* documet.dispatchEvent(new CustomEvent("map:done-send-data", {detail: this)) */
+        document.dispatchEvent(new CustomEvent("map:done-send-data", {detail: this.existingData[this.range]}));
         this.selectorInstance.enable();
 
         const mostListenedCountry = this.existingData[this.range].sort((a, b) => b.value - a.value)[0].country;

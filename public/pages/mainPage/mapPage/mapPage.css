@@ -1,0 +1,6 @@
+#music-map-page .song-container .artist-container{
+    position: absolute;
+    width: 4rem;
+    height: 4rem;
+    bottom: 0;
+}
