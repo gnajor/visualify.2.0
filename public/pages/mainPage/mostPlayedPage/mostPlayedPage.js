@@ -244,15 +244,16 @@ class Spiral{
     bindListeners() {
         this.svg.selectAll(".image-group").on("mouseenter", function (event, d) {
             d3.selectAll(".image-group")
-                .transition().duration(200)
+                .transition().duration(200).ease(d3.easeExpOut)
                 .attr("transform", d => `translate(${d.x}, ${d.y}) scale(1)`);
                 
 
             d3.select(this)
-                .transition().duration(200)
+                .transition().duration(200).ease(d3.easeExpOut)
                 .attr("transform", (d, i) => {
                     return`translate(${d.x}, ${d.y}) scale(${1.25 + (d.ranking)/30})` 
                 })
+                
 
             d3.select(`#item-${d.ranking}`).classed("show", true);
                 
@@ -261,6 +262,7 @@ class Spiral{
             
             d3.select(this).select("circle")
                 .transition()
+                /* .duration(200).ease(d3.easeExpOut) */
                 .attr("stroke-width", 0);
         });
 
