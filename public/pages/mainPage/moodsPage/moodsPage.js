@@ -17,7 +17,7 @@ export async function renderMoodsPage(parent){
             "value": 0,
         }, 
         {
-            "title": "Danceability",
+            "title": "Intense",
             "value": 0,
         }, 
         {
@@ -42,7 +42,7 @@ export async function renderMoodsPage(parent){
     }); 
 }
 
-class WordCloud{
+/* class WordCloud{
     constructor(parent, dataset, range){
         this.range = range;
         this.dataset = dataset[range];
@@ -134,7 +134,7 @@ class WordCloud{
             .attr("transform", d => `translate(${d.x}, ${d.y})rotate(${d.rotate})`)
             .text(d => d.text); 
     }
-}
+} */
 
 class RadarChart{
     constructor(parent, dataset, range, startingDataset, selectorInstance){
@@ -177,7 +177,7 @@ class RadarChart{
 
     async init(){
         this.svg = this.parent.append("svg")
-            .attr("width", this.wSvg)
+            .attr("width", "auto")
             .attr("height", "100%")
             .attr("viewBox", `0 0 ${this.wSvg} ${this.hSvg}`)
             .classed("radarChart", true)
