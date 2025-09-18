@@ -15,7 +15,7 @@
 }
 
 #moods-page .radarChartLabel{ 
-    font-size: 1.1rem; 
+    font-size: 1.1em; 
 }
 #moods-page .gridCircle{ 
     fill: none; stroke: #8E8E8E; 

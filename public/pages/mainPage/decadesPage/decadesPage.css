@@ -5,7 +5,7 @@
 
 #decades-page .decadeText{
     fill:var(--light-grey);
-    font-size: 0.9rem;
+    font-size: 0.9em;
     font-family: sans-serif;
     font-weight: 100;
 }
