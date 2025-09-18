@@ -1,5 +1,5 @@
 import { getCookies, setCookie } from "jsr:@std/http/cookie";
-import "jsr:@std/dotenv/load";
+import { load } from "jsr:@std/dotenv";
 
 export function sleep(ms: number): Promise<Function>{
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -39,7 +39,9 @@ export async function getCountryFromWikdata(spotifyId: string): Promise<any | nu
 }
 
 export async function getSongsFeatures(songs: Array<any>): Promise<any | null>{
-    const apiKey = Deno.env.get("CEREBRAS_API_KEY");
+    const env = await load({ envPath: "auth.env"});
+
+    const apiKey = env.CEREBRAS_API_KEY;
 
     if (!apiKey) {
         throw new Error("API key is missing");
@@ -49,14 +51,12 @@ export async function getSongsFeatures(songs: Array<any>): Promise<any | null>{
                     Melancholic, Sad, Nostalgic, Dark, Haunting, Angry, Aggressive, 
                     Intense, Hopeful, Romantic, Sensual, Dreamy, Reflective, Inspirational, Euphoric, Lonely, Heartbreaking, Peaceful and Mysterious.`;*/
 
-    const instructions = `I want you to analyze the overall mood/feel of these songs one by one. Choose the top 2 categories from this list that best describe each song: Happy, Sad, Energy, Calm, Danceability. Do NOT invent new categories. Return ONLY valid JSON in one line, formatted like this: [{"track": "Song Title 1", "artist": "Artist Name", "moods": ["Mood1","Mood2"]},{"track": "Song Title 2", "artist": "Artist Name", "moods": ["Mood1","Mood2"]}] Do not add any extra text, comments, or line breaks.`;
-
+    const instructions = `I want you to analyze the overall mood/feel of these songs one by one. Choose the top 2 categories from this list that best describe each song: Happy, Sad, Energy, Calm, Intense. Do NOT invent new categories. Return ONLY valid JSON in one line, formatted like this: [{"track": "Song Title 1", "artist": "Artist Name", "moods": ["Mood1","Mood2"]},{"track": "Song Title 2", "artist": "Artist Name", "moods": ["Mood1","Mood2"]}] Do not add any extra text, comments, or line breaks.`;
     let songsStr = "The songs and artists: ";
 
     for(const song of songs){
         songsStr += `${song.title} by ${song.artist}, `;
     }
-
 
     const response = await fetch("https://api.cerebras.ai/v1/chat/completions", {
         method: "POST",
@@ -69,17 +69,15 @@ export async function getSongsFeatures(songs: Array<any>): Promise<any | null>{
             messages: [
                 { role: "user", content: instructions + songsStr},
             ],
-            max_tokens: 2000,          // allow a long answer
+            max_tokens: 2000,          // long answer
             temperature: 0.2,          // lower = more careful
-            top_p: 0.9  
+            top_p: 0.9              //no clue
         }),
     });
 
     const data = await response.json();
-    console.log(data);
 
     if(data.choices[0].message.content){
-        data.choices[0].message.content.replace(/\n/g, "");
         return JSON.parse(data.choices[0].message.content);
     }
     else{
@@ -164,9 +162,7 @@ export async function getCountryFromMusicBrainz(artistName: string): Promise<str
         if (parent) return parent.area.name;
     }
 
-    
     return null;
-    
 }
 
 export async function setToken(data: Record<string, string>): Promise<Response>{
