@@ -177,6 +177,7 @@ export function getMapData(){
 
         for(const artist of State.userData.artists[range]){
             const mapData = {
+                "image": artist?.images[0]?.url,
                 "name": artist.name,
                 "id": artist.id
             }

@@ -32,10 +32,6 @@
     box-sizing: border-box;
 }
 
-html{
-    
-}
-
 body{
     margin: 0;
     background-color: var(--main-black-color);
@@ -87,15 +83,21 @@ section{
 }
 
 section .diagram-container{
+    font-size: 16px;
+
     display: flex;
     justify-content: center;
     align-items: center;
     height: calc(100vh - var(--header-container-height));
+    
+
 }
 
 #wrapper:has(#home-page){
     height: 100vh;
 }
+
+
 
 
 
