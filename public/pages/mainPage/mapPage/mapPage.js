@@ -5,7 +5,6 @@ import { State } from "../../../index.js";
 
 export function renderMapPage(parent){
     const dataset = getMapData();
-    console.log(dataset);
 
     const diagramContainer = document.createElement("div");
     const songContainer = document.createElement("div");
@@ -19,6 +18,7 @@ export function renderMapPage(parent){
 
     selectorInstance.event((event) => {
         map.changeData(dataset, event.target.value);
+        unMarkArtistDivs();
     }); 
 
     document.addEventListener("map:done-send-data", function renderArtistsDivs(event){
@@ -34,16 +34,21 @@ export function renderMapPage(parent){
 function renderArtistsDiv(parent, item, index){
     const artistParent = document.createElement("div");
     artistParent.classList.add("artist-container");
-    artistParent.id = item.country;
+    artistParent.id = "box-" + item.country;
     parent.appendChild(artistParent);
-
-    console.log(item);
 
     artistParent.innerHTML = `<img src="${item.image}">
                               <div class="artist-title-name">
-                                   <h3 class="artitst-title">Top Artist</h3> 
+                                   <h3 class="artist-title">Top Artist</h3> 
                                    <h3 class="artist-name">${item.name}</h3>
                               </div>`; 
+}
+
+function unMarkArtistDivs(){
+    const artistContainer = document.querySelectorAll("#music-map-page .song-container .artist-container")
+    artistContainer.forEach((elem) => {
+        elem.classList.remove("show");
+    });
 }
 
 class Map{
@@ -90,6 +95,7 @@ class Map{
         this.selectorInstance.disable();
         await this.fetchAndSetColors();
         this.done();
+        this.bindListeners();
     }
 
     async prepCountryData(){
@@ -114,6 +120,7 @@ class Map{
             .append("path")
                 .attr("d", this.path)
                 .attr("id", d => this.formatCountryName(d.properties.name))
+                .classed("country", true)
                 .attr('fill', '#383141')
                 .attr("stroke", "black")
     }
@@ -192,7 +199,18 @@ class Map{
         }    
     }
 
+    bindListeners(){
+        const formatCountryName = this.formatCountryName; 
 
+        this.svg.selectAll(".country").each(function(d, i){
+            d3.select(this)
+                .on("click", () =>{
+                    unMarkArtistDivs();
+                    this.classList.add("pressed");
+                    d3.select(`#box-${formatCountryName(d.properties.name)}`).classed("show", true)
+                });
+        });
+    }
 
     async changeData(dataset, range){
         this.dataset = dataset[range];

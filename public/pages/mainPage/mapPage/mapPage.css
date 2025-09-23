@@ -1,6 +1,56 @@
 #music-map-page .song-container .artist-container{
+    --artist-container-width: 10rem;
+
     position: absolute;
-    width: 4rem;
-    height: 4rem;
-    bottom: 0;
+    width: var(--artist-container-width);
+    height: 10rem;
+    bottom: 7rem;
+    left: 4rem;  
+    opacity: 0;
+    z-index: -1;
+    transition: 200ms all ease-in-out;
+}
+
+#music-map-page .song-container .artist-container.show{
+    z-index: 1;
+    opacity: 1;
+}
+
+#music-map-page .song-container .artist-container img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+#music-map-page .song-container .artist-container .artist-title-name{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap:0.4rem;
+
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: normal;
+
+    background-color: var(--dark-grey);
+
+    border-radius: 50%;
+    width: 8rem;
+    height: 8rem;
+    padding: 1rem;
+
+    position: relative;
+    left: calc(var(--artist-container-width) / 2 + 1rem);
+    bottom: calc(var(--artist-container-width) / 2.5);
+}
+
+#music-map-page .song-container .artist-container .artist-title{
+    color: var(--lightest-grey);
+}
+
+#music-map-page .song-container .artist-container .artist-name{
+    color: var(--white);
+    font-style: italic;
 }
