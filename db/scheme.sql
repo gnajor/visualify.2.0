@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS Song(
     title VARCHAR(200) NOT NULL,
     image TEXT NOT NULL,
     year INT NOT NULL,
+    popularity INT NOT NULL,
 
     artist_id REFERENCES Artist(id) ON DELETE CASCADE
 );
@@ -12,6 +13,7 @@ CREATE TABLE IF NOT EXISTS Artist(
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL, 
     image TEXT NOT NULL,
+    popularity INT NOT NULL,
     country VARCHAR(100)
 );
 
