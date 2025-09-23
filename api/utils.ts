@@ -1,5 +1,5 @@
 import { getCookies, setCookie } from "jsr:@std/http/cookie";
-import { load } from "jsr:@std/dotenv";
+import { Song } from "../db/interfaces.ts";
 
 export function sleep(ms: number): Promise<Function>{
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -288,3 +288,70 @@ async function refreshAccessToken(refreshToken: string): Promise<null | { access
         return null;
     }    
 }
+
+export function formatSongsData(songs: any[])/* : Song[] */{
+    const formatted: Song[] = [];
+    
+    console.log(songs);
+}
+
+/* export function getMostPlayedData(){
+    const ranges = Object.keys(State.userData.artists);
+    const formatted = {}
+    const amount = 50;
+
+    formatted.artists = {};
+    formatted.tracks = {};
+        
+    for(const range of ranges){
+        let artistPopularitySum = 0;
+        let trackPopularitySum = 0;
+
+        formatted.artists[range] = State.userData.artists[range].map((artist, i) => {
+            if(i === 0){
+                State.setStateOverlayData("mostListenedArtist", range, {
+                    image: artist?.images[0]?.url,
+                    name: artist.name,
+                });
+            }
+
+            artistPopularitySum += artist.popularity;
+
+            return {
+                name: artist.name,
+                image: artist?.images[0]?.url,
+                popularity: artist.popularity,
+                ranking: i + 1
+            }
+        });
+
+        formatted.tracks[range] = State.userData.tracks[range].map((track, i) => {
+            if(i === 0){
+                State.setStateOverlayData("mostListenedTrack", range, {
+                    image: track.album.images[0].url,
+                    name: track.name,
+                });
+            }
+
+            trackPopularitySum += track.popularity;
+
+            return {
+                name: track.name,
+                image: track.album.images[0].url,
+                popularity: track.popularity,
+                ranking: i + 1,
+            }
+        });
+
+        const avgTrackPopularity = Number((trackPopularitySum / State.userData.tracks[range].length));
+        const avgArtistPopularity = Number((artistPopularitySum / State.userData.artists[range].length));
+        
+        State.setStateOverlayData("avgTrackPopularity", range, avgTrackPopularity);
+        State.setStateOverlayData("avgArtistPopularity", range, avgArtistPopularity);
+
+        formatted.artists[range].slice(0, amount);
+        formatted.tracks[range].slice(0, amount);
+    }
+    
+    return formatted;
+} */

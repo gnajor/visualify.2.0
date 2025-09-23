@@ -1,4 +1,4 @@
-import { authSpotifyUser, getCountryFromMusicBrainz, getCountryFromWikdata, getSongsFeatures, handleLogout, setToken, sleep } from "./utils.ts";
+import { authSpotifyUser, formatSongsData, getCountryFromMusicBrainz, getCountryFromWikdata, getSongsFeatures, handleLogout, setToken, sleep } from "./utils.ts";
 
 let musicbrainzErrors: number = 0;
 let wikidataErrors: number = 0;
@@ -30,6 +30,7 @@ export async function handleRequests(request: Request): Promise<Response>{
             const spotifyResponse = await fetch(spotifyUrl, options);
             const response = await spotifyResponse.json();
             const topItems = response.items;
+            formatSongsData(topItems);
 
             return new Response(JSON.stringify(topItems), {status: 200});
         } 
