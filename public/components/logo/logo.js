@@ -69,7 +69,7 @@ export class Logo{
     initAnimation(){
         const time = 1000;
 
-        setInterval(() => {
+        this.timerId = setInterval(() => {
             let data = this.data;
 
             if(this.counter % 2 === 0)data = this.newData;
@@ -94,5 +94,9 @@ export class Logo{
 
             this.counter++;
         }, time * 0.7)
+    }
+
+    stopAnimation(){
+        clearInterval(this.timerId);
     }
 }
