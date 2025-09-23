@@ -39,9 +39,7 @@ export async function getCountryFromWikdata(spotifyId: string): Promise<any | nu
 }
 
 export async function getSongsFeatures(songs: Array<any>): Promise<any | null>{
-    const env = await load({ envPath: "auth.env"});
-
-    const apiKey = env.CEREBRAS_API_KEY;
+    const apiKey = Deno.env.get("CEREBRAS_API_KEY");
 
     if (!apiKey) {
         throw new Error("API key is missing");
