@@ -30,7 +30,9 @@ export async function handleRequests(request: Request): Promise<Response>{
             const spotifyResponse = await fetch(spotifyUrl, options);
             const response = await spotifyResponse.json();
             const topItems = response.items;
-            formatSongsData(topItems);
+
+            if(type === "tracks")formatSongsData(response.items);
+
 
             return new Response(JSON.stringify(topItems), {status: 200});
         } 

@@ -25,6 +25,8 @@ export async function getAllTopUserDataAndSetState(){
 
     const results = await Promise.all(promises);
 
+    console.log(results)
+
     for(const result of results){
         if(State.userData[result.type][result.range] !== null){
             State.userData[result.type][result.range] = State.userData[result.type][result.range].concat(result.resource);

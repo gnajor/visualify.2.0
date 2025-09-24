@@ -1,5 +1,5 @@
 import { getCookies, setCookie } from "jsr:@std/http/cookie";
-import { Song } from "../db/interfaces.ts";
+import { Album, Artist, Song } from "../db/interfaces.ts";
 
 export function sleep(ms: number): Promise<Function>{
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -289,10 +289,45 @@ async function refreshAccessToken(refreshToken: string): Promise<null | { access
     }    
 }
 
-export function formatSongsData(songs: any[])/* : Song[] */{
-    const formatted: Song[] = [];
-    
-    console.log(songs);
+export function formatSongsData(songs: any[]): {
+        "songs": Song[],
+        "artists": Artist[],
+        "albums": Album[]
+    }{
+    const formatted = {
+        "songs": [] as Song[],
+        "artists": [] as Artist[],
+        "albums": [] as Album[]
+    }
+
+    for(const song of songs){
+        const songObj: Song = {
+            "title": song?.name,
+            "duration": song?.duration_ms,
+            "popularity": song?.popularity,
+            "link": song?.external_urls?.spotify,
+            "explicit": song?.explicit,
+        }
+
+        const artistObj: Artist = {
+            "name": song?.artists[0]?.name,
+            "link": song?.artists[0]?.external_urls?.spotify,
+        }
+
+        const albumObj: Album = {
+            "name": song?.album?.artists[0]?.name,
+            "image": song?.album?.images[0]?.url,
+            "link": song?.album?.external_urls?.spotify,
+            "release_year": song?.album?.release_date.split("-")[0],
+            "total_tracks": song?.album?.total_tracks
+        }
+
+        formatted.songs.push(songObj);
+        formatted.artists.push(artistObj);
+        formatted.albums.push(albumObj);
+    }
+
+    return formatted;
 }
 
 /* export function getMostPlayedData(){

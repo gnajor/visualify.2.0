@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS Artist (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL, 
-    image TEXT NOT NULL,
-    popularity INT NOT NULL,
+    image TEXT,
+    popularity INT,
     country VARCHAR(100)
 );
 
