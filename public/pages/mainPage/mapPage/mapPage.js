@@ -6,6 +6,7 @@ import { State } from "../../../index.js";
 export function renderMapPage(parent){
     const dataset = getMapData();
 
+
     const diagramContainer = document.createElement("div");
     const songContainer = document.createElement("div");
     diagramContainer.className = "diagram-container";
@@ -78,10 +79,6 @@ class Map{
         this.init();
     }
 
-    sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
     async init(){
         this.svg = this.parent.append("svg")
             .attr("width", "100%")
@@ -89,14 +86,22 @@ class Map{
             .attr("viewBox", `0 0 ${this.wSvg} ${this.hSvg}`)
             .classed("map-graph", true)
      
+            
+            
         await this.prepCountryData();
         this.prepScales();
         this.render();
         this.selectorInstance.disable();
+        await this.getExistingDataFromServer();
         await this.fetchAndSetColors();
         this.done();
         this.bindListeners();
     }
+
+    async getExistingDataFromServer(){
+        const existingServerData = await apiCom("server:get-country-data", this.dataset);
+        this.existingServerData = existingServerData;
+    } 
 
     async prepCountryData(){
         const data = await d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson");
@@ -126,37 +131,51 @@ class Map{
     }
 
     async fetchAndSetColors(){
+        console.log(this.dataset.length);
+        console.log(this.existingServerData);
+
         for(const artist of this.dataset){
-            const data = await apiCom("song:get-country", {spotifyId: artist.id, artistName: artist.name})
-            this.formatArtistCountryItem(data, artist);
+            const artistObj = this.existingServerData.find(item => item.id === artist.id);
+
+            if(artistObj !== undefined){
+                if(artistObj.country !== null){
+                    this.formatArtistCountryItem(artistObj.country, artist);
+                }
+                continue;
+            }
+
+            const data = await apiCom("song:get-country", {spotifyId: artist.id, artistName: artist.name});
+            if(data.ok && data.resource){
+                if(data.resource.result){
+                    apiCom("server:set-country-data", {id: artist.id, country: data.resource.result});
+                    this.formatArtistCountryItem(data.resource.result, artist);
+                }
+            }
         }
     }
 
-    formatArtistCountryItem(data, artist){
-        if(data.ok && data.resource){
-            if(data.resource.result){
-                const country = this.formatCountryName(data.resource.result);
-                const exists = this.existingData[this.range].find(item => item.country === country);
-                let newCountry = null;
+    formatArtistCountryItem(countryName, artist){
+        const country = this.formatCountryName(countryName);
+        const exists = this.existingData[this.range].find(item => item.country === country);
+        let newCountry = null;
 
-                if(exists){
-                    exists.value++;
-                    newCountry = exists;
-                }
-                else{
-                    newCountry = {
-                        "image": artist.image,
-                        "country": this.formatCountryName(country),
-                        "name": artist.name,
-                        "value": 1
-                    }
-                    this.existingData[this.range].push(newCountry);
-                }
-
-                this.updateCountryColor(newCountry);
-            }
+        if(exists){
+            exists.value++;
+            newCountry = exists;
         }
-    } 
+        else{
+            newCountry = {
+                "image": artist.image,
+                "country": this.formatCountryName(country),
+                "name": artist.name,
+                "value": 1
+            }
+            this.existingData[this.range].push(newCountry);
+        }
+
+        this.updateCountryColor(newCountry);
+    }
+
 
     updateCountryColor(countryObj){
         const max = d3.max(this.existingData[this.range].map(item => item.value))
@@ -227,6 +246,7 @@ class Map{
             else{
                 this.selectorInstance.disable();
                 document.dispatchEvent(new CustomEvent("map:processing", {detail: {chartId: "map"}}));
+                await this.getExistingDataFromServer();
                 await this.fetchAndSetColors();
                 this.done();
             }
