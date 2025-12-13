@@ -2,6 +2,29 @@ export async function apiCom(action, data){
     const options = {};
 
     switch(action){
+        case "server:get-country-data": {
+            options.method = "POST";
+            options.body = data;
+
+            const resource = await fetcher("/api/get-country-data", options);
+            return resource;
+        }
+
+        case "server:set-country-data": {
+            options.method = "POST";
+            options.body = data;
+
+            const resource = await fetcher("/api/set-country-data", options);
+            return resource;
+        }
+
+        case "server:set-data": {
+            options.method = "POST";
+            options.body = data;
+            const resource = await fetcher("/api/set-server-data", options);
+            return resource;
+        }
+
         case "token:auth": {
             options.method = "GET";
             const resource = await fetcher("/api/check-token-auth", options, true);
@@ -32,12 +55,6 @@ export async function apiCom(action, data){
             options.body = data;
             const resource = await fetcher("/api/songs-features", options, true);
             return resource; 
-        }
-
-        case "token-name:authorization": {
-    /*         options.method = "GET";
-            const resource = await fetcher(`../../api/user/?token=${encrypt(data.token)}&name=${encrypt(data.name)}`, options);
-            return resource; */
         }
 
         case "user:patch-new-image": {

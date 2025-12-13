@@ -1,4 +1,5 @@
-import { authSpotifyUser, formatSongsData, getCountryFromMusicBrainz, getCountryFromWikdata, getSongsFeatures, handleLogout, setToken, sleep } from "./utils.ts";
+import { getArtistsWithCountryData, insertArtistsBulk, updateArtistCountry, insertSongsBulk} from "../db/db.ts";
+import { authSpotifyUser, formatArtistsData, formatTracksData, getCountryFromMusicBrainz, getCountryFromWikdata, getSongsFeatures, handleLogout, setToken, sleep } from "./utils.ts";
 
 let musicbrainzErrors: number = 0;
 let wikidataErrors: number = 0;
@@ -7,6 +8,30 @@ let total: number = 0;
 export async function handleRequests(request: Request): Promise<Response>{
     const url = new URL(request.url);
     const pathname = url.pathname;
+
+    if(pathname === "/api/set-server-data" && request.method === "POST"){
+        const data = await request.json();
+ 
+        const formattedArtists = formatArtistsData(data.artists);
+        const formattedSongs = formatTracksData(data.tracks);
+        
+        await insertArtistsBulk(formattedArtists);
+        await insertSongsBulk(formattedSongs); 
+
+        return new Response(JSON.stringify('data added to server'), {status: 200});
+    }
+
+    if(pathname === "/api/get-country-data" && request.method === "POST"){
+        const data = await request.json();
+        const artistWithCountry = await getArtistsWithCountryData(data);
+        return new Response(JSON.stringify(artistWithCountry), {status: 200});
+    }
+
+    if(pathname === "/api/set-country-data" && request.method === "POST"){
+        const data = await request.json();
+        updateArtistCountry(data);
+        return new Response(JSON.stringify("country data updated"), {status: 200});
+    }
 
     if(pathname === "/api/top-items" && request.method === "GET"){
         const type = url.searchParams.get("type");
@@ -30,10 +55,6 @@ export async function handleRequests(request: Request): Promise<Response>{
             const spotifyResponse = await fetch(spotifyUrl, options);
             const response = await spotifyResponse.json();
             const topItems = response.items;
-
-            if(type === "tracks")formatSongsData(response.items);
-
-
             return new Response(JSON.stringify(topItems), {status: 200});
         } 
         catch(error) {
