@@ -1,0 +1,13 @@
+Map
+ - The ranking is off (probably shows the most recent instead of the most listened or the deepest)
+
+Moods
+Map
+ - Get the data to work with the server instead of always fetching
+ - Can still click since before
+
+ Server
+ - The album can reference a artist that doesn't exist;
+ - The songs can reference an artist that doesn't exist
+
+ 
