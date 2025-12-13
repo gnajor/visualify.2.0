@@ -2,7 +2,7 @@ import { apiCom } from "./apiCom/apiCom.js";
 import { updateNavMarker } from "./components/header/nav/nav.js";
 import { Switch } from "./components/header/switch/switch.js";
 import { handleRedirect } from "./logic/handleRedirect.js";
-import { getAllTopUserDataAndSetState } from "./logic/utils.js";
+import { getAllTopUserDataAndSetState, setStateToServer } from "./logic/utils.js";
 import { renderHomePage } from "./pages/homePage/homePage.js";
 import { updateArtistDivPosition } from "./pages/mainPage/decadesPage/decadesPage.js";
 import { renderStructure } from "./pages/mainPage/structure.js";
@@ -102,6 +102,7 @@ const app = {
         }
         else{
             await getAllTopUserDataAndSetState();
+            setStateToServer();
             renderStructure(this.parent);
         }
     },

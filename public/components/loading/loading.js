@@ -15,7 +15,6 @@ class Loading{
     init(){
         this.renderStructure();
         this.renderBars();
-
     }
 
     render(){
