@@ -63,7 +63,7 @@ export async function getSongsFeatures(songs: Array<any>): Promise<any | null>{
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            model: "llama-4-scout-17b-16e-instruct",
+            model: "llama-3.3-70b",
             messages: [
                 { role: "user", content: instructions + songsStr},
             ],
@@ -289,19 +289,30 @@ async function refreshAccessToken(refreshToken: string): Promise<null | { access
     }    
 }
 
-export function formatSongsData(songs: any[]): {
-        "songs": Song[],
-        "artists": Artist[],
-        "albums": Album[]
-    }{
-    const formatted = {
-        "songs": [] as Song[],
-        "artists": [] as Artist[],
-        "albums": [] as Album[]
+export function formatArtistsData(artists: any[]): Artist[]{
+    const formatted = []; 
+
+    for(const artist of artists){
+        const obj: Artist = {
+            "id": artist?.id,
+            "link": artist?.external_urls?.spotify,
+            "image": artist?.images[0]?.url,
+            "name": artist?.name,
+            "popularity": artist?.popularity,
+            "genres": artist?.genres,
+        }
+        formatted.push(obj);
     }
+
+    return formatted.filter((artist, i, self) => i === self.findIndex(art => art.id === artist.id));
+}
+
+export function formatTracksData(songs: any[]): {"song": Song, "album": Album, "artist": Artist}[]{
+    const formatted = [];
 
     for(const song of songs){
         const songObj: Song = {
+            "id": song?.id,
             "title": song?.name,
             "duration": song?.duration_ms,
             "popularity": song?.popularity,
@@ -310,21 +321,25 @@ export function formatSongsData(songs: any[]): {
         }
 
         const artistObj: Artist = {
-            "name": song?.artists[0]?.name,
-            "link": song?.artists[0]?.external_urls?.spotify,
+            "id": song?.artists[0]?.id,
+            "link": song?.artists[0]?.external_urls.spotify,
+            "name": song?.artists[0]?.name
         }
 
         const albumObj: Album = {
-            "name": song?.album?.artists[0]?.name,
+            "id": song?.album?.id,
+            "name": song?.album?.name,
             "image": song?.album?.images[0]?.url,
             "link": song?.album?.external_urls?.spotify,
-            "release_year": song?.album?.release_date.split("-")[0],
-            "total_tracks": song?.album?.total_tracks
+            "release_year": Number(song?.album?.release_date.split("-")[0]),
+            "total_tracks": Number(song?.album?.total_tracks)
         }
 
-        formatted.songs.push(songObj);
-        formatted.artists.push(artistObj);
-        formatted.albums.push(albumObj);
+        formatted.push({
+            "song": songObj,
+            "album": albumObj,
+            "artist": artistObj,
+        });
     }
 
     return formatted;
