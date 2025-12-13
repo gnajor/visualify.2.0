@@ -25,8 +25,6 @@ export async function getAllTopUserDataAndSetState(){
 
     const results = await Promise.all(promises);
 
-    console.log(results)
-
     for(const result of results){
         if(State.userData[result.type][result.range] !== null){
             State.userData[result.type][result.range] = State.userData[result.type][result.range].concat(result.resource);
@@ -35,6 +33,21 @@ export async function getAllTopUserDataAndSetState(){
             State.userData[result.type][result.range] = result.resource;
         }
     }
+}
+
+export async function setStateToServer(){
+    const dataNeeded = {
+        artists: [],
+        tracks: []
+    };
+
+    for(const key in State.userData){
+        for(const termKey in State.userData[key]){
+            dataNeeded[key] = dataNeeded[key].concat(State.userData[key][termKey]);
+        }
+    }
+
+    const resource = await apiCom("server:set-data", dataNeeded);
 }
 
 export function getDecadeData(){
@@ -181,6 +194,7 @@ export function getMapData(){
             const mapData = {
                 "image": artist?.images[0]?.url,
                 "name": artist.name,
+                "link": artist?.external_urls?.spotify,
                 "id": artist.id
             }
 
@@ -191,6 +205,7 @@ export function getMapData(){
     
     return formatted;
 }
+
 
 export function getMoodsChartData(){
     const ranges = Object.keys(State.userData.tracks);
