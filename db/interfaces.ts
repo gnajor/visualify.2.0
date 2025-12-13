@@ -1,6 +1,7 @@
 export interface Song{
-    id?: number;
-    artist_id?: number;
+    id: string;
+    artist_id?: string;
+    album_id?: string;
     title: string;
     popularity: number;
     duration: number;
@@ -11,19 +12,27 @@ export interface Song{
 }
 
 export interface Artist{
-    id?: number;
-    name: string;
-    link: string;
+    id: string;
+    name?: string;
+    link?: string;
     image?: string;
     popularity?: number;
     country?: string;
+    genres?: string[];
+    country_tries?: string;
 }
 
 export interface Album{
-    id?: number;
+    id?: string;
+    artist_id?: string;
     name: string;
     image: string;
     link: string;
     release_year: number;
     total_tracks: number;
+}
+
+export interface Genre{
+    name?: string,
+    artist_id?: string,
 }
