@@ -1,7 +1,6 @@
 import { createClient } from "jsr:@supabase/supabase-js@2";
-import { Artist, Song, Genre, Album } from "./interfaces.ts";
+import { Artist, Song, Genre, Album, mood } from "./interfaces.ts";
 import { formatGenres } from "./utils.ts";
-import { error } from "node:console";
 
 
 const supabase = createClient(
@@ -145,7 +144,7 @@ export async function insertGenres(genres: Genre[]){
 
     if(shouldInsertGenres.length === 0) return;
 
-    const {data, error} = await supabase
+    const {error} = await supabase
         .from("genre")
         .insert(shouldInsertGenres)
         .select();
@@ -159,12 +158,53 @@ export async function insertArtistGenres(genres: Genre[]){
     const genresUniqArtistId = genres.filter((elem, i, self) => i === self.findIndex(genre => genre.artist_id === elem.artist_id));
     const formattedGenres = genresUniqArtistId.map(genre => { return {"genre_name": genre.name, "artist_id": genre.artist_id}});
 
-    const {data, error} = await supabase
+    const {error} = await supabase
         .from("artist_genres")
         .insert(formattedGenres)
         .select();
 
     if(error) throw error;    
+}
+
+export async function insertMoods(tracks: mood[]){
+    if(tracks.length === 0) return;
+
+    const moodsWithUniqTrackId = tracks.filter((elem, i, self) => i === self.findIndex(track => track.id === elem.id));
+    const formatted = moodsWithUniqTrackId.map(track => {return {"song_id": track.id, "moods": track.moods}});
+    const dbFormatted = []
+
+    for(const formattedTrack of formatted){
+        for(let i = 0; i < 2; i++){
+            dbFormatted.push({
+                "song_id": formattedTrack.song_id,
+                "mood_type": formattedTrack.moods[i]
+            });
+        }
+    }
+
+    const ids = dbFormatted.map(track => track.song_id);
+
+    const {data: existingTrackMoods, error: fetchError } = await supabase
+        .from("song_moods")
+        .select("song_id")
+        .in("song_id", ids);
+
+    if(fetchError) throw fetchError;
+
+    const shouldInsert = [];
+
+    for(const track of dbFormatted){
+        const exists = existingTrackMoods.some(existingTrackMood => existingTrackMood.song_id === track.song_id);
+        if(!exists) shouldInsert.push(track);
+    }
+
+    if(shouldInsert.length === 0) return;
+
+    const {error} = await supabase
+        .from("song_moods")
+        .insert(shouldInsert);
+        
+    if(error) throw error;
 }
 
 export async function getArtistsWithCountryData(artists: Artist[]): Promise<Artist[] | undefined>{
@@ -205,9 +245,38 @@ export async function getArtistsWithCountryData(artists: Artist[]): Promise<Arti
         }
     }
 
-   /*  console.log(artistWithCountry) */
-
     return artistWithCountry;
+}
+
+export async function getSongMoodData(songs: Song[]): Promise<any>{
+    if(songs.length === 0) return;
+
+    const songIds = songs.map(song => song.id);
+    
+    const {data: existingSongMoods, error: fetchError} = await supabase
+        .from("song_moods")
+        .select("*")
+        .in("song_id", songIds)
+        
+    if(fetchError) throw fetchError;
+
+    const result = [];
+    const map = new Map();
+
+    for (const { song_id, mood_type } of existingSongMoods) {
+        if (!map.has(song_id)) {
+            map.set(song_id, []);
+        }
+
+        map.get(song_id).push(mood_type);
+    }
+
+    for (const [song_id, moods] of map.entries()) {
+        result.push({ song_id, moods });
+    }
+
+    
+    return result.map(item => { return {"id": item.song_id, "moods": item.moods}}); 
 }
 
 export async function updateArtistCountry(artist: Artist){
