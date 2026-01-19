@@ -76,10 +76,25 @@ header nav .nav-item.marked{
 
 header nav #dashboard-nav-item{
     height: 100%;
+    position: relative;
+    transition: 400ms background ease-in-out;
 }
 
-header nav img{
+header nav #dashboard-nav-item.marked{
+    background-color: var(--main-purple-color);
+}
+
+header nav #dashboard-nav-item img.invisible{
+    z-index: -1;
+    opacity: 0;
+}
+
+header nav #dashboard-nav-item img{
     height: 1.35em;
+    position: absolute;
+    transition: 400ms all ease-in-out;
+    z-index: 1;
+    opacity: 1;
 }
 
 header nav #marker{
@@ -88,6 +103,11 @@ header nav #marker{
     background-color: var(--main-purple-color);
     z-index: 1;
     transition: 400ms all ease-in-out;
+    opacity: 1;
+}
+
+header nav #marker.invisible{
+    opacity: 0;
 }
 
 .no-transition header nav #marker{
