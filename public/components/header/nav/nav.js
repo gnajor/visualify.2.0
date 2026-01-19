@@ -11,13 +11,14 @@ export function renderNav(parent){
                             <div class="nav-item">Map</div>
                         </div>
                         <div id="dashboard-nav-item">
-                            <img src="../../../media/icons/dashboard.svg">
+                            <img id="white" src="../../../media/icons/dashboard.svg">
+                            <img class="invisible" id="black" src="../../../media/icons/dashboard_black.svg">
                         </div>
                         <div id="marker"></div>`;
     
-    const menu = parent.querySelector("#nav-items");
     const navItems = parent.querySelectorAll(".nav-item");
-    const marker = parent.querySelector("#marker");
+    const dashboardItem = parent.querySelector("#dashboard-nav-item"); 
+    const marker = document.querySelector("header nav #marker");
 
     navItems[0].classList.add("marked");
     updateNavMarker();
@@ -28,14 +29,43 @@ export function renderNav(parent){
             element.classList.add("marked");
             updateNavMarker();
             updateCurrentMainPage(`${- i * 100}vw` , i);
+            dashboardIconChange("remove");
+            marker.classList.remove("invisible");
         })
     });
+
+    dashboardItem.addEventListener("click", () => {
+        dashboardIconChange("add");
+
+        if(document.querySelector("header nav .nav-item.marked")){
+            document.querySelector("header nav .nav-item.marked").classList.remove("marked");
+
+            const marker = document.querySelector("header nav #marker");
+            marker.classList.add("invisible"); 
+        }
+    });
+
+    function dashboardIconChange(type){
+        const blackIcon = dashboardItem.querySelector("img#black");
+        const whiteIcon = dashboardItem.querySelector("img#white");
+
+        if(type === "remove"){
+            blackIcon.classList.add("invisible");
+            whiteIcon.classList.remove("invisible");
+            dashboardItem.classList.remove("marked");
+            
+        }
+        else{
+            blackIcon.classList.remove("invisible");
+            whiteIcon.classList.add("invisible");
+            dashboardItem.classList.add("marked");
+        }
+    }
 }
 
 export function updateNavMarker(){
     const markedElement = document.querySelector("header nav .nav-item.marked");
     const menu = document.querySelector("header nav #nav-items");
-    const marker = document.querySelector("header nav #marker");
     updateMarker(markedElement, menu, marker)
 }
 
