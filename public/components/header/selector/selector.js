@@ -56,6 +56,4 @@ export class Selector{
     event(func){
         this.element.addEventListener("change", func);
     }
-
-
 }
