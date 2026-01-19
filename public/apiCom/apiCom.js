@@ -10,11 +10,27 @@ export async function apiCom(action, data){
             return resource;
         }
 
+        case "server:get-mood-data": {
+            options.method = "POST";
+            options.body = data;
+
+            const resource = await fetcher("/api/get-mood-data", options);
+            return resource;
+        }
+
         case "server:set-country-data": {
             options.method = "POST";
             options.body = data;
 
             const resource = await fetcher("/api/set-country-data", options);
+            return resource;
+        }
+
+        case "server:set-mood-data": {
+            options.method = "POST";
+            options.body = data;
+
+            const resource = await fetcher("/api/set-mood-data", options);
             return resource;
         }
 
@@ -65,6 +81,13 @@ export async function apiCom(action, data){
             }
             const resource = await fetcher(`../../api/user`, options);
             return resource */
+        }
+
+        case "user:logout": {
+            options.method = "POST";
+            options.body = {};
+            const resource = await fetcher("/api/logout", options);
+            return resource;
         }
 
         default: {
