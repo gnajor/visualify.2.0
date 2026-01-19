@@ -1,5 +1,6 @@
 import { getCookies, setCookie } from "jsr:@std/http/cookie";
 import { Album, Artist, Song, Genre } from "../db/interfaces.ts";
+import { error, time } from "node:console";
 
 export function sleep(ms: number): Promise<Function>{
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -45,11 +46,11 @@ export async function getSongsFeatures(songs: Array<any>): Promise<any | null>{
         throw new Error("API key is missing");
     }
 
-    const instructions = `I want you to analyze the overall mood/feel of these songs one by one. Choose the top 2 categories from this list that best describe each song: Happy, Sad, Energy, Calm, Intense. Do NOT invent new categories. Return ONLY valid JSON in one line, formatted like this: [{"track": "Song Title 1", "artist": "Artist Name", "moods": ["Mood1","Mood2"]},{"track": "Song Title 2", "artist": "Artist Name", "moods": ["Mood1","Mood2"]}] Do not add any extra text, comments, or line breaks.`;
+    const instructions = `I want you to analyze the overall mood/feel of these songs one by one. Choose the top 2 categories from this list that best describe each song: Happy, Sad, Energy, Calm, Intense. Do NOT invent new categories. Return ONLY valid JSON in one line, formatted like this: [{"track": "Song Title 1", "artist": "Artist Name", "moods": ["Mood1","Mood2"]}, {"track": "Song Title 2", "artist": "Artist Name", "moods": ["Mood1","Mood2"]}] Do not add any extra text, comments, or line breaks.`;
     let songsStr = "The songs and artists: ";
 
     for(const song of songs){
-        songsStr += `${song.title} by ${song.artist}, `;
+        songsStr += `${song.title} by ${song.artist}`;
     }
 
     const response = await fetch("https://api.cerebras.ai/v1/chat/completions", {
@@ -63,7 +64,7 @@ export async function getSongsFeatures(songs: Array<any>): Promise<any | null>{
             messages: [
                 { role: "user", content: instructions + songsStr},
             ],
-            max_tokens: 2000,          // long answer
+            max_tokens: 3000,          // long answer
             temperature: 0.2,          // lower = more careful
             top_p: 0.9              //no clue
         }),
@@ -71,13 +72,26 @@ export async function getSongsFeatures(songs: Array<any>): Promise<any | null>{
 
     const data = await response.json();
 
-    if(data.choices[0].message.content){
-        return JSON.parse(data.choices[0].message.content);
-    }
-    else{
+    if(!data.choices[0].message.content){
         return null;
     }
 
+    const items = JSON.parse(data.choices[0].message.content);
+    const formatted = [];
+
+    for(const item of items){
+        const songFound = songs.find(song => song.title === item.track);
+
+        if(!songFound) continue;
+
+        formatted.push({
+            id: songFound.id,
+            track: item.track,
+            artist: item.artist,
+            moods: item.moods
+        });
+    }
+    return formatted;
 
 
 /*     const mbUrl = `https://musicbrainz.org/ws/2/recording/?query=artist:"${encodeURIComponent(artist)}"%20AND%20recording:"${encodeURIComponent(title)}"&fmt=json`;
@@ -190,15 +204,21 @@ export async function setToken(data: Record<string, string>): Promise<Response>{
     });
 }
 
-export async function handleLogout(): Promise<Response>{
+export async function handleLogout(): Promise<Response> {
+    const headers = new Headers();
+
+    headers.append(
+        "Set-Cookie",
+        "access_token=; HttpOnly; Path=/; Max-Age=0"
+    );
+    headers.append(
+        "Set-Cookie",
+        "refresh_token=; HttpOnly; Path=/; Max-Age=0"
+    );
+
     return new Response("Logged out", {
         status: 200,
-        headers: {
-            "Set-Cookie": [
-                "access_token=; HttpOnly; Path=/; Max-Age=0",
-                "refresh_token=; HttpOnly; Path=/; Max-Age=0"
-            ].join("\n"),
-        }
+        headers
     });
 }
 
