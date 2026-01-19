@@ -216,6 +216,7 @@ export function getMoodsChartData(){
 
         for(const track of State.userData.tracks[range]){
             const moodsData = {
+                "id": track.id,
                 "title": track.name,
                 "artist": track.artists[0].name
             }
