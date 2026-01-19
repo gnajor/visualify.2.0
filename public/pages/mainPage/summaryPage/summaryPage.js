@@ -1,26 +1,35 @@
 function renderSummaryPage(parent, dataset){
     parent.innerHTML = `<div id="summary-box-container">
-                            <div class="outer-box" id="outer-box-1"></div>
-                            <div class="outer-box" id="outer-box-2"></div>
-                            <div class="outer-box" id="outer-box-3"></div>
+                            <div class="outer-box" id="outer-box-left"></div>
+                            <div class="outer-box" id="outer-box-center"></div>
+                            <div class="outer-box" id="outer-box-right"></div>
                         </div>`;
 
-    const outerBoxOne = parent.querySelector("#outer-box-1");
-    const outerBoxTwo = parent.querySelector("#outer-box-2");
-    const outerBoxThree = parent.querySelector("#outer-box-3");   
+    const outerBoxLeft = parent.querySelector("#outer-box-left");
+    const outerBoxCenter = parent.querySelector("#outer-box-center");
+    const outerBoxRight = parent.querySelector("#outer-box-right");   
 }
 
-function renderInnerBoxes(parent, data, type){
-    parent.innerHTML = ``
+function renderOuterBoxRight(parent){
+    parent.innerHTML = `<div id="top-container">
+                            <div id="devloper-logout-container">
+                                <div id="developer-box"></div>
+                                <div id="logout-box"></div>
+                            </div>
+                            <div id="avg-song-pop-box"></div>
+                        </div>
+                        <div id="most-listened-country"></div>`;
+}
 
+function renderOuterBoxCenter(parent){
+    parent.innerHTML = `<div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>`;
 
-    switch(type){
-        case "svgImg": {
-            break;
-        }
+}
 
-        case "svgGraph": {
-            break;
-        }
-    }
+function renderOuterBoxLeft(){
+
 }
