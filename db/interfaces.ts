@@ -32,6 +32,13 @@ export interface Album{
     total_tracks: number;
 }
 
+export interface mood{
+    id: string;
+    artist: string;
+    track: string;
+    moods: string[];
+}
+
 export interface Genre{
     name?: string,
     artist_id?: string,
