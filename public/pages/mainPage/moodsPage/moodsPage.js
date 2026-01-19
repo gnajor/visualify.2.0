@@ -1,8 +1,8 @@
 import { apiCom } from "../../../apiCom/apiCom.js";
 import { Selector } from "../../../components/header/selector/selector.js";
-import { getMoodsChartData, formatSongs} from "../../../logic/utils.js";
+import { getMoodsChartData} from "../../../logic/utils.js";
 
-export async function renderMoodsPage(parent){
+export function renderMoodsPage(parent){
     const dataset = getMoodsChartData();
 
     const diagramContainer = document.createElement("div");
@@ -10,7 +10,17 @@ export async function renderMoodsPage(parent){
     parent.appendChild(diagramContainer);
 
 /*     const wordCloud = new WordCloud(diagramContainer, dataset, "short_term"); */
-    
+
+    const selectorInstance = Selector.getSelectorByPageId(parent.id);
+    const controller = radarController(diagramContainer, dataset, selectorInstance);
+    controller.loadRange("short_term");
+
+    selectorInstance.event((event) => {
+        controller.loadRange(event.target.value);
+    }); 
+}
+
+function radarController(parent, fullDataset, selectorInstance){
     const startingDataset = [
         {
             "title": "Energy",
@@ -34,12 +44,263 @@ export async function renderMoodsPage(parent){
         }
     ]; 
 
-    const selectorInstance = Selector.getSelectorByPageId(parent.id);
-    const radarChart = new RadarChart(diagramContainer, dataset, "short_term", startingDataset, selectorInstance);
+    const cache = {
+        "short_term": null,
+        "medium_term": null,
+        "long_term": null
+    } 
 
-    selectorInstance.event((event) => {
-        radarChart.changeData(dataset, event.target.value);
-    }); 
+    const chart = radarChart(parent, startingDataset);
+
+    async function loadRange(range){
+        if(cache[range]){
+            chart.update(cache[range]);
+            return;
+        }
+
+        selectorInstance.disable();
+        document.dispatchEvent(new CustomEvent("radar:processing"));
+
+        const datasetToSetAndGet = [];
+        const songsMood = await apiCom("server:get-mood-data", fullDataset[range]);
+        let moodsData = [];
+
+        for(const song of fullDataset[range]){
+            const exists = songsMood.some(songWithMood => songWithMood.id === song.id);
+
+            if(!exists){
+                datasetToSetAndGet.push(song);   
+            }
+        }
+        
+        if(datasetToSetAndGet.length !== 0){
+            const data = await apiCom("songs:get-features", datasetToSetAndGet); //gets the song features
+            moodsData = data.resource; 
+        }
+
+        const formatted = formatTrackFeatures(moodsData.concat(songsMood));
+
+        cache[range] = formatted;
+        chart.update(formatted);
+        selectorInstance.enable();
+    }
+
+    function formatTrackFeatures(tracks){
+        const moods = startingDataset.map(d => ({
+            title: d.title,
+            value: 0
+        }));
+
+        for(const track of tracks){
+            track.moods.forEach((mood) => {
+                const exists = moods.find(moodsItem => moodsItem.title === mood);
+                if(exists)exists.value++;
+            });
+        }
+
+        moods.forEach(item => item.value /= tracks.length);
+        return moods;
+    }
+
+    return { loadRange };
+}
+
+function radarChart(parentSelector, startingDataset){
+    const parent = d3.select(parentSelector);
+
+    const margin = {
+        top: 50,
+        right: 100,
+        bottom: 50,
+        left: 100
+    }
+
+    const wSvg =  850  
+    const hSvg = 800; 
+    const hViz = hSvg - margin.bottom - margin.top;
+    const wViz = wSvg - margin.left - margin.right;
+    const radius = d3.min([hViz, wViz]) / 2; 
+
+    const gridLevels = [0.4, 1]; //where the circles are
+    const pieAngle = (2 * Math.PI) / startingDataset.length;
+    const transitionDuration = 700;
+
+    let polygon;
+    let polygonDots;
+
+
+    const svg = parent.append("svg")
+        .attr("width", "auto")
+        .attr("height", "100%")
+        .attr("viewBox", `0 0 ${wSvg} ${hSvg}`)
+        .classed("radarChart", true)
+
+    const graphGroup = svg.append("g")
+        .classed("graphGroup", true)
+        .attr("transform", `translate(${wSvg / 2},  ${hSvg/2})`)
+
+    renderGrid();
+    renderLabels();
+    renderPolygonDots();
+    renderPolygon();
+
+    function renderGrid(){
+        //circles
+        graphGroup.append("g").classed("circleGridGroup", true)
+            .selectAll("circle")
+            .data(gridLevels)
+            .enter()
+            .append("circle")
+                .classed("gridCircle", true)
+                .attr("r", (d) => d * radius)
+        
+        //lines
+        graphGroup.append("g").classed("lineGroup", true)
+            .selectAll("line")
+            .data(startingDataset)
+            .enter()
+            .append("line")
+                .attr("x1", 0)
+                .attr("y1", 0)
+                .attr("x2", (_d, i) => radius * Math.sin(i * pieAngle))
+                .attr("y2", (_d, i) => -radius * Math.cos(i * pieAngle))
+                .attr("stroke", "#ccc")
+                .attr("stroke-dasharray", "9");
+    }
+
+    function renderLabels(){
+        graphGroup.append("g").classed("labelGroup", true)
+            .selectAll("text")
+            .data(startingDataset)
+            .enter()
+            .append("text")
+                .classed("radarChartLabel", true)
+                .text((d) => d.title)
+                .attr("x", (_d, i, nodes) => getLabelX(i, nodes))
+                .attr("y", (_d, i, nodes) => getLabelY(i, nodes));
+    }
+    
+
+    function renderPolygon(){
+        polygon = graphGroup.append("g").classed("polygonGroup", true)
+            .selectAll("path")
+            .data([startingDataset])
+            .enter()
+            .append("path")
+                .attr("class", "radarArea")
+                .attr("d", radarLine());
+    }
+
+    function renderPolygonDots(){
+        polygonDots = graphGroup.append("g").classed("dotsGroup", true)
+            .selectAll("circle")
+            .data(startingDataset)
+            .enter()
+            .append("circle")
+                .classed("radarCircles", true)
+                .attr("cx", (d, i) => getDotX(d, i))
+                .attr("cy", (d, i) => getDotY(d, i))
+                .attr("r", 5);
+    }
+
+    function update(data) {
+        polygonDots
+            .data(data)
+            .transition()
+            .duration(transitionDuration)
+            .attr("cx", getDotX)
+            .attr("cy", getDotY);
+
+        polygon
+            .data([data])
+            .transition()
+            .duration(transitionDuration)
+            .attr("d", radarLine());
+    }
+
+    function reset() {
+        update(startingDataset);
+    }
+    
+    //---------------------------
+    // HELPERS
+    //---------------------------
+
+    function radarLine(){
+        return d3.lineRadial()
+            .radius((d) => d.value * radius)
+            .angle((_d, i) => i * pieAngle)
+            .curve(d3.curveLinearClosed);
+    }
+
+    function getDotX(d, i){
+        const r = d.value * radius;
+        const angle = i * pieAngle;
+        return r * Math.sin(angle);
+    }
+
+    function getDotY(d, i){
+        const r = d.value * radius;
+        const angle = i * pieAngle;
+        return -r * Math.cos(angle);
+    }
+
+    function getLabelY(index, nodes){
+        let addHeight = 0;
+        const labelHeight = nodes[index].getBBox().height;
+
+        switch(index){
+            case 1: 
+                addHeight = labelHeight / 3;
+                break;
+            case 2:
+                addHeight = labelHeight * 0.6;
+                break;
+            case 3:
+                addHeight = labelHeight * 0.6;
+                break;
+            case 4:
+                addHeight = labelHeight / 3;
+                break;
+            default:
+                addHeight = 0;  
+                break;                 
+        }
+
+        const angle = index * pieAngle;
+        return -radius * Math.cos(angle) * 1.05 + addHeight;
+    }
+
+    function getLabelX(index, nodes){
+        let addWidth = 0;
+        const labelWidth = nodes[index].getBBox().width;
+
+        switch(index){
+            case 0:
+                addWidth = -labelWidth / 2;
+                break;
+            case 1:
+                addWidth = labelWidth / 11;
+                break;
+            case 3:
+                addWidth = -labelWidth;
+                break;
+            case 4:
+                addWidth = -labelWidth;
+                break;
+            default:
+                addWidth = 0;   
+                break;                
+        }
+
+        const angle = index * pieAngle;
+        return radius * Math.sin(angle) * 1.05 + addWidth;
+    }
+
+    return {
+        update,
+        reset
+    }
 }
 
 /* class WordCloud{
@@ -135,284 +396,3 @@ export async function renderMoodsPage(parent){
             .text(d => d.text); 
     }
 } */
-
-class RadarChart{
-    constructor(parent, dataset, range, startingDataset, selectorInstance){
-        this.range = range;
-        this.parent = d3.select(parent);
-        this.dataset = dataset[range];
-        this.startingDataset = startingDataset;
-        this.selectorInstance = selectorInstance;
-
-        this.existingData = {
-            "short_term": {},
-            "medium_term": {},
-            "long_term": {}
-        } 
-
-        this.margin = {
-            top: 50,
-            right: 100,
-            bottom: 50,
-            left: 100
-        }
-        this.colors = {
-            lilacOpacity: "#D2AFFF",
-            lilac: "#D2AFFF"
-        }
-
-        this.wSvg =  850  
-        this.hSvg = 800; 
-        this.hViz = this.hSvg - this.margin.bottom - this.margin.top;
-        this.wViz = this.wSvg - this.margin.left - this.margin.right;
-        this.radius = d3.min([this.hViz, this.wViz]) / 2; 
-
-        this.gridLevels = [0.4, 1];
-        this.pieAngle = (2 * Math.PI) / this.startingDataset.length;
-
-        this.transitionDuration = 700;
-
-        this.init();
-    }
-
-    async init(){
-        this.svg = this.parent.append("svg")
-            .attr("width", "auto")
-            .attr("height", "100%")
-            .attr("viewBox", `0 0 ${this.wSvg} ${this.hSvg}`)
-            .classed("radarChart", true)
-
-        this.graphGroup = this.svg.append("g")
-            .classed("graphGroup", true)
-            .attr("transform", `translate(${this.wSvg / 2},  ${this.hSvg/2})`)
-
-        this.renderGrid();
-        this.renderLabels();
-        this.renderPolygonDots();
-        this.renderPolygon();
-        this.selectorInstance.disable();
-        await this.fetchTracksFeatures();
-        this.selectorInstance.enable();
-        document.dispatchEvent(new CustomEvent("radar:done", {detail: {chartId: "moods", firstTime: true}}));
-    }
-
-    renderGrid(){
-        const circles = this.graphGroup.append("g").classed("circleGridGroup", true)
-            .selectAll("circle")
-            .data(this.gridLevels)
-            .enter()
-            .append("circle")
-                .classed("gridCircle", true)
-                .attr("r", (d, i, nodes) => d * this.radius)
-        
-        const lines = this.graphGroup.append("g").classed("lineGroup", true)
-            .selectAll("line")
-            .data(this.dataset)
-            .enter()
-            .append("line")
-                .attr("x1", 0)
-                .attr("y1", 0)
-                .attr("x2", (d, i, nodes) => {
-                    const angle = i * this.pieAngle;
-                    return this.radius * Math.sin(angle);
-                })
-                .attr("y2", (d, i, nodes) => {
-                    const angle = i * this.pieAngle;
-                    return -this.radius * Math.cos(angle);
-                })
-                .attr("stroke", "#ccc")
-                .attr("stroke-dasharray", "9");
-    }
-
-    renderLabels(){
-        this.graphGroup.append("g").classed("labelGroup", true)
-            .selectAll("text")
-            .data(this.startingDataset)
-            .enter()
-            .append("text")
-                .classed("radarChartLabel", true)
-                .text((d, i, nodes) => d.title)
-                .attr("x", (d, i, nodes) => this.getLabelX(i, nodes))
-                .attr("y", (d, i, nodes) => this.getLabelY(i, nodes));
-    }
-
-    renderPolygon(){
-        const radarLine = d3.lineRadial()
-            .radius((d, i) => d.value * this.radius)
-            .angle((d, i) => i * this.pieAngle)
-            .curve(d3.curveLinearClosed);
-
-        this.polygon = this.graphGroup.append("g").classed("polygonGroup", true)
-            .selectAll("path")
-            .data([this.startingDataset])
-            .enter()
-            .append("path")
-                .attr("class", "radarArea")
-                .attr("d", radarLine);
-    }
-
-    renderPolygonDots(){
-        this.polygonDots = this.graphGroup.append("g").classed("dotsGroup", true)
-            .selectAll("circle")
-            .data(this.startingDataset)
-            .enter()
-            .append("circle")
-                .classed("radarCircles", true)
-                .attr("cx", (d, i) => this.getDotX(d, i))
-                .attr("cy", (d, i) => this.getDotY(d, i))
-                .attr("r", 5);
-    }
-
-    async fetchTracksFeatures(){
-        const data = await apiCom("songs:get-features", this.dataset);
-        this.formatTrackFeatures(data.resource);
-    }
-
-    formatTrackFeatures(data){
-        const moods = this.startingDataset.map(item => item);
-
-        for(const track of data){
-            track.moods.forEach((mood) => {
-                const exists = moods.find(moodsItem => moodsItem.title === mood);
-
-                if(exists){
-                    exists.value++;
-                }
-                else{
-                    console.error("something went wrong");
-                }
-            });
-        }
-
-        for(const item of moods){
-            item.value = item.value / data.length;
-        }
-
-        this.existingData[this.range] = moods;
-        console.log(moods)
-        this.updateData(moods);
-    }
-
-    getDotY(d, i){
-        const r = d.value * this.radius;
-        const angle = i * this.pieAngle;
-        return -r * Math.cos(angle);
-    }
-
-    getDotX(d, i){
-        const r = d.value * this.radius;
-        const angle = i * this.pieAngle;
-        return r * Math.sin(angle);
-    }
-
-    getLabelY(index, nodes){
-        let addHeight = 0;
-        const labelHeight = nodes[index].getBBox().height;
-
-        switch(index){
-            case 1: 
-                addHeight = labelHeight / 3;
-                break;
-            case 2:
-                addHeight = labelHeight * 0.6;
-                break;
-            case 3:
-                addHeight = labelHeight * 0.6;
-                break;
-            case 4:
-                addHeight = labelHeight / 3;
-                break;
-            default:
-                addHeight = 0;  
-                break;                 
-        }
-
-        const angle = index * this.pieAngle;
-        return -this.radius * Math.cos(angle) * 1.05 + addHeight;
-    }
-
-    getLabelX(index, nodes){
-        let addWidth = 0;
-        const labelWidth = nodes[index].getBBox().width;
-
-        switch(index){
-            case 0:
-                addWidth = -labelWidth / 2;
-                break;
-            case 1:
-                addWidth = labelWidth / 11;
-                break;
-            case 3:
-                addWidth = -labelWidth;
-                break;
-            case 4:
-                addWidth = -labelWidth;
-                break;
-            default:
-                addWidth = 0;   
-                break;                
-        }
-
-        const angle = index * this.pieAngle;
-        return this.radius * Math.sin(angle) * 1.05 + addWidth;
-    }
-
-    updateData(dataset){
-        this.dataset = dataset;
-
-        this.polygonDots
-            .data(this.dataset)
-            .transition()
-            .duration(this.transitionDuration)
-            .attr("cx", (d, i) => this.getDotX(d, i))
-            .attr("cy", (d, i) => this.getDotY(d, i))
-
-        const radarLine = d3.lineRadial()
-            .radius((d, i) => d.value * this.radius)
-            .angle((d, i) => i * this.pieAngle)
-            .curve(d3.curveLinearClosed);
-
-        this.polygon
-            .data([this.dataset])
-            .transition()
-            .duration(this.transitionDuration)
-            .attr("d", radarLine)
-    }
-
-    reset(){
-        this.polygonDots
-            .data(this.startingDataset)
-            .transition()
-            .duration(this.transitionDuration)
-            .attr("cx", (d, i) => this.getDotX(d, i))
-            .attr("cy", (d, i) => this.getDotY(d, i))
-
-        const radarLine = d3.lineRadial()
-            .radius((d, i) => d.value * this.radius)
-            .angle((d, i) => i * this.pieAngle)
-            .curve(d3.curveLinearClosed);
-
-        this.polygon
-            .data([this.startingDataset])
-            .transition()
-            .duration(this.transitionDuration)
-            .attr("d", radarLine)
-    }
-
-    async changeData(dataset, range){
-        this.dataset = dataset[range];
-        this.range = range;
-        this.reset();
-
-        if(this.existingData[this.range]?.counter){
-            this.updateData(this.existingData[this.range].data)
-        }
-        else{
-            this.selectorInstance.disable();
-            document.dispatchEvent(new CustomEvent("radar:processing", {detail: {chartId: "moods"}}));
-            await this.fetchTracksFeatures();
-            document.dispatchEvent(new CustomEvent("radar:done", {detail: {chartId: "moods", firstTime: false}}));
-            this.selectorInstance.enable();
-        }
-    }
-}
