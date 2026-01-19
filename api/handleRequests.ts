@@ -1,4 +1,5 @@
-import { getArtistsWithCountryData, insertArtistsBulk, updateArtistCountry, insertSongsBulk} from "../db/db.ts";
+import path from "node:path";
+import { getArtistsWithCountryData, insertArtistsBulk, getSongMoodData, updateArtistCountry, insertSongsBulk, insertMoods} from "../db/db.ts";
 import { authSpotifyUser, formatArtistsData, formatTracksData, getCountryFromMusicBrainz, getCountryFromWikdata, getSongsFeatures, handleLogout, setToken, sleep } from "./utils.ts";
 
 let musicbrainzErrors: number = 0;
@@ -27,10 +28,22 @@ export async function handleRequests(request: Request): Promise<Response>{
         return new Response(JSON.stringify(artistWithCountry), {status: 200});
     }
 
+    if(pathname === "/api/get-mood-data" && request.method === "POST"){
+        const data = await request.json();
+        const songsWithMoods = await getSongMoodData(data);
+        return new Response(JSON.stringify(songsWithMoods), {status: 200});
+    }
+
     if(pathname === "/api/set-country-data" && request.method === "POST"){
         const data = await request.json();
         updateArtistCountry(data);
         return new Response(JSON.stringify("country data updated"), {status: 200});
+    }
+
+    if(pathname === "/api/set-mood-data" && request.method === "POST"){
+        const data = await request.json();
+        insertMoods(data);
+        return new Response(JSON.stringify("mood data updated"), {status: 200});
     }
 
     if(pathname === "/api/top-items" && request.method === "GET"){
@@ -128,8 +141,9 @@ export async function handleRequests(request: Request): Promise<Response>{
 
     if(pathname === "/api/songs-features" && request.method === "POST"){
         const data = await request.json();
-        const abdata = await getSongsFeatures(data); 
-        return new Response(JSON.stringify(abdata), {status: 200});
+        const moodSongData = await getSongsFeatures(data); 
+        insertMoods(moodSongData);
+        return new Response(JSON.stringify(moodSongData), {status: 200});
     }
 
     if(pathname === "/api/set-token" && request.method === "POST"){
