@@ -6,6 +6,7 @@ import { Switch } from "../../components/header/switch/switch.js";
 import { renderGenresPage } from "./genresPage/genresPage.js";
 import { renderMapPage } from "./mapPage/mapPage.js";
 import { renderMoodsPage } from "./moodsPage/moodsPage.js";
+import { renderSideButtons } from "../../components/sideButtons/sideButtons.js";
 
 export function renderStructure(parent){
     parent.innerHTML = `<header></header>
@@ -25,6 +26,7 @@ export function renderStructure(parent){
     const moodsPage = parent.querySelector("#moods-page");
     const musicMapPage = parent.querySelector("#music-map-page");
     const summaryPage = parent.querySelector("#summary-page");
+    const sideButtons = parent.querySelector("#side-buttons");
     const header = parent.querySelector("header");
     
     const pageDoms = parent.querySelectorAll("section");
@@ -34,6 +36,7 @@ export function renderStructure(parent){
     renderGenresPage(genrePage);
     renderMapPage(musicMapPage);
     renderMoodsPage(moodsPage);
+    renderSideButtons(sideButtons);
 }
 
 export function updateCurrentMainPage(pageValue, pageIndex){
