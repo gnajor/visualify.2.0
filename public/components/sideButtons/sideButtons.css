@@ -1,0 +1,34 @@
+#side-buttons .circle-box{
+    background-color: var(--menu-black-color);
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 50%;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    transition:50ms transform ease-in-out
+}
+
+#side-buttons img{
+    line-height: 0;
+    display: block;
+}
+
+#side-buttons #info-icon-container img{
+    width: 60%;
+}
+
+#side-buttons #edit-icon-container img{
+    width: 45%;
+}
+
+#side-buttons #logout-icon-container img{
+    width: 40%;
+}
+
+#side-buttons .circle-box:hover{
+    transform: scale(1.2);
+}
