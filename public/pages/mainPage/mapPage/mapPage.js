@@ -5,8 +5,6 @@ import { State } from "../../../index.js";
 
 export function renderMapPage(parent){
     const dataset = getMapData();
-
-
     const diagramContainer = document.createElement("div");
     const songContainer = document.createElement("div");
     diagramContainer.className = "diagram-container";
@@ -23,19 +21,24 @@ export function renderMapPage(parent){
     }); 
 
     document.addEventListener("map:done-send-data", function renderArtistsDivs(event){
-        const dataset = event.detail;
+        const dataset = event.detail.artists;
+        const range = event.detail.range;
+        
+        if(songContainer.childNodes !== 0){
+            songContainer.childNodes.forEach(element => element.remove());
+        }
 
-        dataset.forEach((item, i) => {
-            renderArtistsDiv(songContainer, item, i);
+        dataset.forEach((item) => {
+            renderArtistsDiv(songContainer, item, range);
         });
     });
 }
 
 
-function renderArtistsDiv(parent, item, index){
+function renderArtistsDiv(parent, item, range){
     const artistParent = document.createElement("div");
     artistParent.classList.add("artist-container");
-    artistParent.id = "box-" + item.country;
+    artistParent.id = "box-" + item.country + "-" + range;
     parent.appendChild(artistParent);
 
     artistParent.innerHTML = `<img src="${item.image}">
@@ -58,7 +61,6 @@ class Map{
         this.parent = d3.select(parent);
         this.range = range;
         this.dataset = dataset[range];
-
 
         this.existingData = {
             "short_term": [],
@@ -218,18 +220,22 @@ class Map{
         }    
     }
 
-    bindListeners(){
-        const formatCountryName = this.formatCountryName; 
+bindListeners() {
+  const formatCountryName = this.formatCountryName;
 
-        this.svg.selectAll(".country").each(function(d, i){
-            d3.select(this)
-                .on("click", () =>{
-                    unMarkArtistDivs();
-                    this.classList.add("pressed");
-                    d3.select(`#box-${formatCountryName(d.properties.name)}`).classed("show", true)
-                });
-        });
-    }
+  this.svg.selectAll(".country").on("click", (event, d) => {
+      const range = this.range;
+
+      unMarkArtistDivs();
+
+      // mark clicked country
+      d3.select(event.currentTarget)
+        .classed("pressed", true);
+
+      const id = `#box-${formatCountryName(d.properties.name)}-${range}`;
+      d3.select(id).classed("show", true);
+    });
+}
 
     async changeData(dataset, range){
         this.dataset = dataset[range];
@@ -245,7 +251,7 @@ class Map{
             }
             else{
                 this.selectorInstance.disable();
-                document.dispatchEvent(new CustomEvent("map:processing", {detail: {chartId: "map"}}));
+                //document.dispatchEvent(new CustomEvent("map:processing", {detail: {chartId: "map"}}));
                 await this.getExistingDataFromServer();
                 await this.fetchAndSetColors();
                 this.done();
@@ -253,8 +259,15 @@ class Map{
     }
     
     done(){
-        document.dispatchEvent(new CustomEvent("map:done", {detail: {chartId: "map"}}));
-        document.dispatchEvent(new CustomEvent("map:done-send-data", {detail: this.existingData[this.range]}));
+        //document.dispatchEvent(new CustomEvent("map:done", {detail: {chartId: "map"}}));
+        const detail = {detail : 
+            {
+                "range": this.range,
+                "artists": this.existingData[this.range]
+            }
+        }
+        
+        document.dispatchEvent(new CustomEvent("map:done-send-data", detail));
         this.selectorInstance.enable();
 
         const mostListenedCountry = this.existingData[this.range].sort((a, b) => b.value - a.value)[0].country;
