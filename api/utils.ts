@@ -73,6 +73,7 @@ export async function getSongsFeatures(songs: Array<any>): Promise<any | null>{
     });
 
     const data = await response.json();
+    console.log(data);
 
     if(!data?.choices?.[0]?.message?.content){
         return null;
@@ -81,7 +82,8 @@ export async function getSongsFeatures(songs: Array<any>): Promise<any | null>{
     let items;
     try {
         items = JSON.parse(data.choices[0].message.content);
-    } catch (err) {
+    } 
+    catch (err) {
         console.error("Invalid JSON from model:", data.choices[0].message.content);
         return null;
     }
