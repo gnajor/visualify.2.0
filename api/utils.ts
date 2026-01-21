@@ -49,6 +49,8 @@ export async function getSongsFeatures(songs: Array<any>): Promise<any | null>{
     const instructions = `I want you to analyze the overall mood/feel of these songs one by one. Choose the top 2 categories from this list that best describe each song: Happy, Sad, Energy, Calm, Intense. Do NOT invent new categories. Return ONLY valid JSON in one line, formatted like this: [{"track": "Song Title 1", "artist": "Artist Name", "moods": ["Mood1","Mood2"]}, {"track": "Song Title 2", "artist": "Artist Name", "moods": ["Mood1","Mood2"]}] Do not add any extra text, comments, or line breaks.`;
     let songsStr = "The songs and artists: ";
 
+    console.log(songs);
+
     for(const song of songs){
         songsStr += `${song.title} by ${song.artist}`;
     }
@@ -72,7 +74,7 @@ export async function getSongsFeatures(songs: Array<any>): Promise<any | null>{
 
     const data = await response.json();
 
-    if(!data?.choices[0]?.message?.content){
+    if(!data?.choices?.[0]?.message?.content){
         return null;
     }
 
