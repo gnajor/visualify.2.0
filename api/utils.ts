@@ -72,7 +72,7 @@ export async function getSongsFeatures(songs: Array<any>): Promise<any | null>{
 
     const data = await response.json();
 
-    if(!data.choices[0].message.content){
+    if(!data?.choices[0]?.message?.content){
         return null;
     }
 
