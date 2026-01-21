@@ -1,4 +1,3 @@
-import path from "node:path";
 import { getArtistsWithCountryData, insertArtistsBulk, getSongMoodData, updateArtistCountry, insertSongsBulk, insertMoods} from "../db/db.ts";
 import { authSpotifyUser, formatArtistsData, formatTracksData, getCountryFromMusicBrainz, getCountryFromWikdata, getSongsFeatures, handleLogout, setToken, sleep } from "./utils.ts";
 
@@ -153,7 +152,7 @@ export async function handleRequests(request: Request): Promise<Response>{
         const codeVerifier = data.codeVerifier;
 
         const clientId = "aa99b24e94d448eab167b514b89f2de2";
-        const redirectUri = /* "https://visualify.deno.dev/" */ "http://127.0.0.1:8888/";
+        const redirectUri = "https://visualify.deno.dev/"  /* "http://127.0.0.1:8888/" */;
 
         if(!clientId){
             return new Response(JSON.stringify({error: "client_id does not exist"}), {status: 500});
