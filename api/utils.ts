@@ -78,7 +78,14 @@ export async function getSongsFeatures(songs: Array<any>): Promise<any | null>{
         return null;
     }
 
-    const items = JSON.parse(data.choices[0].message.content);
+    let items;
+    try {
+        items = JSON.parse(data.choices[0].message.content);
+    } catch (err) {
+        console.error("Invalid JSON from model:", data.choices[0].message.content);
+        return null;
+    }
+
     const formatted = [];
 
     for(const item of items){
