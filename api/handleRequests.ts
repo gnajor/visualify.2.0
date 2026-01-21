@@ -1,4 +1,3 @@
-import path from "node:path";
 import { getArtistsWithCountryData, insertArtistsBulk, getSongMoodData, updateArtistCountry, insertSongsBulk, insertMoods} from "../db/db.ts";
 import { authSpotifyUser, formatArtistsData, formatTracksData, getCountryFromMusicBrainz, getCountryFromWikdata, getSongsFeatures, handleLogout, setToken, sleep } from "./utils.ts";
 
