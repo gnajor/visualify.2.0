@@ -2,6 +2,7 @@ import { getMapData } from "../../../logic/utils.js";
 import { apiCom } from "../../../apiCom/apiCom.js";
 import { Selector } from "../../../components/header/selector/selector.js";
 import { State } from "../../../index.js";
+import { findArray } from "../../../logic/utils.js";
 
 export function renderMapPage(parent){
     const dataset = getMapData();
@@ -23,7 +24,6 @@ export function renderMapPage(parent){
     document.addEventListener("map:done-send-data", function renderArtistsDivs(event){
         const dataset = event.detail.artists;
         const range = event.detail.range;
-
 
         dataset.forEach((item) => {
             const foundElement = findArray(songContainer.childNodes, (element) => element.className.includes(item.country));
