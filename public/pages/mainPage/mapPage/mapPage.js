@@ -23,17 +23,25 @@ export function renderMapPage(parent){
     document.addEventListener("map:done-send-data", function renderArtistsDivs(event){
         const dataset = event.detail.artists;
         const range = event.detail.range;
-        
-        if(songContainer.childNodes !== 0){
-            songContainer.childNodes.forEach(element => element.remove());
-        }
 
-        dataset.forEach((item) => {
-            renderArtistsDiv(songContainer, item, range);
-        });
+        if(songContainer.childNodes !== 0){
+            dataset.forEach((item) => {
+                const foundChild = songContainer.childNodes.find(element => element.className.includes(item.country));
+                if(foundChild){
+                    foundChild.classList.add("box-" + item.country + "-" + range);
+                }
+                else{
+                    renderArtistsDiv(songContainer, item, range);
+                }
+            });
+        }
+        else{
+            dataset.forEach((item) => {
+                renderArtistsDiv(songContainer, item, range);
+            });
+        }
     });
 }
-
 
 function renderArtistsDiv(parent, item, range){
     const artistParent = document.createElement("div");
