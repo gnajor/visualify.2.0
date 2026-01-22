@@ -24,22 +24,17 @@ export function renderMapPage(parent){
         const dataset = event.detail.artists;
         const range = event.detail.range;
 
-        if(songContainer.childNodes !== 0){
-            dataset.forEach((item) => {
-                const foundChild = songContainer.childNodes.find(element => element.className.includes(item.country));
-                if(foundChild){
-                    foundChild.classList.add("box-" + item.country + "-" + range);
-                }
-                else{
-                    renderArtistsDiv(songContainer, item, range);
-                }
-            });
-        }
-        else{
-            dataset.forEach((item) => {
+
+        dataset.forEach((item) => {
+            const foundElement = findArray(songContainer.childNodes, (element) => element.className.includes(item.country));
+
+            if(foundElement){
+                foundElement.classList.add("box-" + item.country + "-" + range);
+            }
+            else{
                 renderArtistsDiv(songContainer, item, range);
-            });
-        }
+            }
+        });
     });
 }
 
@@ -232,10 +227,7 @@ bindListeners() {
       const range = this.range;
 
       unMarkArtistDivs();
-
-      // mark clicked country
-      d3.select(event.currentTarget)
-        .classed("pressed", true);
+      d3.select(event.currentTarget).classed("pressed", true);
 
       const className = `.box-${formatCountryName(d.properties.name)}-${range}`;
       d3.select(className).classed("show", true);
