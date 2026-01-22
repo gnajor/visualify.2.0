@@ -38,7 +38,7 @@ export function renderMapPage(parent){
 function renderArtistsDiv(parent, item, range){
     const artistParent = document.createElement("div");
     artistParent.classList.add("artist-container");
-    artistParent.id = "box-" + item.country + "-" + range;
+    artistParent.classList.add("box-" + item.country + "-" + range);
     parent.appendChild(artistParent);
 
     artistParent.innerHTML = `<img src="${item.image}">
@@ -133,9 +133,6 @@ class Map{
     }
 
     async fetchAndSetColors(){
-        console.log(this.dataset.length);
-        console.log(this.existingServerData);
-
         for(const artist of this.dataset){
             const artistObj = this.existingServerData.find(item => item.id === artist.id);
 
@@ -232,8 +229,8 @@ bindListeners() {
       d3.select(event.currentTarget)
         .classed("pressed", true);
 
-      const id = `#box-${formatCountryName(d.properties.name)}-${range}`;
-      d3.select(id).classed("show", true);
+      const className = `.box-${formatCountryName(d.properties.name)}-${range}`;
+      d3.select(className).classed("show", true);
     });
 }
 
