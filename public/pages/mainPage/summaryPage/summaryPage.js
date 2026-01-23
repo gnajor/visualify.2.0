@@ -2,7 +2,7 @@ import { State } from "../../../index.js";
 
 export function renderSummaryPage(parent){
     const dataset = State.getStateOverlayDate();
-    console.log()
+    console.log(dataset)
 
 
     parent.innerHTML = `<div id="summary-box-container">
