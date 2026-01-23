@@ -221,16 +221,15 @@ class Map{
     }
 
     bindListeners() {
-    const formatCountryName = this.formatCountryName;
+        const formatCountryName = this.formatCountryName;
+        this.svg.selectAll(".country").on("click", (event, d) => {
+            const range = this.range;
 
-    this.svg.selectAll(".country").on("click", (event, d) => {
-        const range = this.range;
+            unMarkArtistDivs();
+            d3.select(event.currentTarget).classed("pressed", true);
 
-        unMarkArtistDivs();
-        d3.select(event.currentTarget).classed("pressed", true);
-
-        const className = `.box-${formatCountryName(d.properties.name)}-${range}`;
-        d3.select(className).classed("show", true);
+            const className = `.box-${formatCountryName(d.properties.name)}-${range}`;
+            d3.select(className).classed("show", true);
         });
     }
 
@@ -243,16 +242,16 @@ class Map{
             .attr("stroke", "black")
             .classed("done", false)
         
-            if(this.existingData[this.range].length !== 0){
-                this.setColorsFromMemory();
-            }
-            else{
-                this.selectorInstance.disable();
-                //document.dispatchEvent(new CustomEvent("map:processing", {detail: {chartId: "map"}}));
-                await this.getExistingDataFromServer();
-                await this.fetchAndSetColors();
-                this.done();
-            }
+        if(this.existingData[this.range].length !== 0){
+            this.setColorsFromMemory();
+        }
+        else{
+            this.selectorInstance.disable();
+            //document.dispatchEvent(new CustomEvent("map:processing", {detail: {chartId: "map"}}));
+            await this.getExistingDataFromServer();
+            await this.fetchAndSetColors();
+        }
+        this.done();
     }
     
     done(){
