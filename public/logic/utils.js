@@ -94,7 +94,7 @@ export function getDecadeData(){
 export function getMostPlayedData(){
     const ranges = Object.keys(State.userData.artists);
     const formatted = {}
-    const amount = 50;
+    const amount = 100;
 
     formatted.artists = {};
     formatted.tracks = {};

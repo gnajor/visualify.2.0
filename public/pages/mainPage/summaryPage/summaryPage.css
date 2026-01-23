@@ -1,0 +1,73 @@
+#summary-page{
+    height: calc(100vh - var(--header-container-height));
+    --gap: 1rem;
+    --box-padding: 0.5rem
+}
+
+#summary-page #summary-box-container{
+    display: flex;
+    gap:var(--gap);
+}
+
+#summary-page .outer-box{
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+}
+
+#summary-page .text-box{
+    display: flex;
+    flex-direction: column;
+}
+
+#summary-page .text-box h3{
+    color: var(--lightest-grey);
+}
+
+#summary-page .text-box h2{
+    color: var(--main-purple-color);
+}
+
+#summary-page .text-box-underline h2{
+    color: var(--white);
+    border-bottom: 2px solid var(--main-purple-color);
+}
+
+#summary-page .box:not(.text-box){
+    justify-content: center;
+}
+
+#summary-page .box{
+    padding: 0.5rem 0.7rem;
+}
+
+
+/* left outer box */
+#summary-page #left-outer-box #top-container{
+    display: flex;
+    gap: var(--gap);
+}
+
+#summary-page #left-outer-box #developer-logout-container{
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+}
+
+#summary-page #left-outer-box #avg-song-pop-box{
+    display: flex;
+    flex-direction: column;
+}
+
+#summary-page #most-listened-country{
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* center outer box */
+
+
+#summary-page .te{
+
+}

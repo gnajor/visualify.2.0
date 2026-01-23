@@ -220,19 +220,19 @@ class Map{
         }    
     }
 
-bindListeners() {
-  const formatCountryName = this.formatCountryName;
+    bindListeners() {
+    const formatCountryName = this.formatCountryName;
 
-  this.svg.selectAll(".country").on("click", (event, d) => {
-      const range = this.range;
+    this.svg.selectAll(".country").on("click", (event, d) => {
+        const range = this.range;
 
-      unMarkArtistDivs();
-      d3.select(event.currentTarget).classed("pressed", true);
+        unMarkArtistDivs();
+        d3.select(event.currentTarget).classed("pressed", true);
 
-      const className = `.box-${formatCountryName(d.properties.name)}-${range}`;
-      d3.select(className).classed("show", true);
-    });
-}
+        const className = `.box-${formatCountryName(d.properties.name)}-${range}`;
+        d3.select(className).classed("show", true);
+        });
+    }
 
     async changeData(dataset, range){
         this.dataset = dataset[range];

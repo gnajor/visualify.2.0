@@ -7,8 +7,11 @@ import { renderGenresPage } from "./genresPage/genresPage.js";
 import { renderMapPage } from "./mapPage/mapPage.js";
 import { renderMoodsPage } from "./moodsPage/moodsPage.js";
 import { renderSideButtons } from "../../components/sideButtons/sideButtons.js";
+import { renderSummaryPage } from "./summaryPage/summaryPage.js";
 
 export function renderStructure(parent){
+    
+
     parent.innerHTML = `<header></header>
                         <main>
                             <section id="most-played-page" class="switch-button-needed"></section>
@@ -37,6 +40,7 @@ export function renderStructure(parent){
     renderMapPage(musicMapPage);
     renderMoodsPage(moodsPage);
     renderSideButtons(sideButtons);
+    renderSummaryPage(summaryPage);
 }
 
 export function updateCurrentMainPage(pageValue, pageIndex){

@@ -86,6 +86,10 @@ export const State = {
 
     setStateOverlayData(key, timeTerm, data){
         this.overlayData[timeTerm][key] = data; 
+    },
+
+    getStateOverlayDate(){
+        return State.overlayData;
     }
 }
 
