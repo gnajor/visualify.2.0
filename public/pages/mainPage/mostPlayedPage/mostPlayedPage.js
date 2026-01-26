@@ -1,7 +1,8 @@
-import { Selector } from "../../../components/header/selector/selector.js";
+import { onSelectorChange, getSelectorValue } from "../../../components/header/selector/selector.js";
 import { Switch } from "../../../components/header/switch/switch.js";
 import { getMostPlayedData } from "../../../logic/utils.js";
 import { formatSongs } from "../../../logic/utils.js";
+import { DonutChart } from "../../../components/donutChart/donutChart.js";
 
 export function renderMostPlayedPage(parent){
     const parentId = "#" + parent.id;
@@ -14,19 +15,18 @@ export function renderMostPlayedPage(parent){
     parent.appendChild(dataDetailsContainer);
     parent.appendChild(diagramContainer);
 
-    const selectorInstance = Selector.getSelectorByPageId(parent.id);
     const switchInstance = Switch.getSwitchByPageId(parent.id);
-    const spiral = new Spiral(`${parentId} .${diagramContainer.className}`, dataset[switchInstance.currentSwitchState][selectorInstance.element.value]);
-    renderDataDetails(dataDetailsContainer, dataset[switchInstance.currentSwitchState][selectorInstance.element.value]);
+    const spiral = new Spiral(`${parentId} .${diagramContainer.className}`, dataset[switchInstance.currentSwitchState][getSelectorValue()]);
+    renderDataDetails(dataDetailsContainer, dataset[switchInstance.currentSwitchState][getSelectorValue()]);
 
     switchInstance.event(() => {
-        spiral.changeData(dataset[switchInstance.currentSwitchState][selectorInstance.element.value]);
-        renderDataDetails(dataDetailsContainer, dataset[switchInstance.currentSwitchState][selectorInstance.element.value]);
+        spiral.changeData(dataset[switchInstance.currentSwitchState][getSelectorValue()]);
+        renderDataDetails(dataDetailsContainer, dataset[switchInstance.currentSwitchState][getSelectorValue()]);
     });
 
-    selectorInstance.event((event) => {
+    onSelectorChange((event) => {
         spiral.changeData(dataset[switchInstance.currentSwitchState][event.target.value]);
-        renderDataDetails(dataDetailsContainer, dataset[switchInstance.currentSwitchState][selectorInstance.element.value]);
+        renderDataDetails(dataDetailsContainer, dataset[switchInstance.currentSwitchState][event.target.value]);
     }); 
 }
 
@@ -54,64 +54,12 @@ function renderDataDetails(parent, dataset){
                                         <div class="popularity-title">Spotify Popularity</div> 
                                     </div>`;
         
-        const donutchart = new DonutChart(itemContainer.querySelector(".donut-chart"), newDataset);
-    }
-}
-
-class DonutChart{
-    constructor(parent, dataset){
-        this.parent = d3.select(parent);
-        this.dataset = dataset;
-
-        this.wSvg = 100;
-        this.hSvg = 100;
-        this.radius = Math.min(this.wSvg, this.hSvg) / 2;
-
-        this.init();
-    }
-
-    init(){
-        this.svg = this.parent.append("svg")
-            .attr("viewBox", `0 0 ${this.wSvg} ${this.hSvg}`)
-            .attr("width", "3.5rem")
-            .attr("height", "3.5rem")
-            .classed("donut-chart", true)
-
-        this.prepScales();
-        this.render();
-    }
-
-    prepScales(){
-        this.pie = d3.pie()
-            .sort(null)
-            .value(d => d.value);
-
-        this.color = d3.scaleOrdinal()
-            .domain(this.dataset.map(item => item.label))
-            .range(["var(--main-green-color)", "gray"])
-
-        this.arc = d3.arc()
-            .innerRadius(this.radius - 10)
-            .outerRadius(this.radius)
-    }
-
-    render(){
-        const group = this.svg.append("g");
-        group.attr("transform", `translate(${this.wSvg / 2}, ${this.hSvg / 2})`)
-            .selectAll("path")
-            .data(this.pie(this.dataset))
-            .enter()
-                .append("path")
-                .attr("fill", d => this.color(d.data.label))
-                .attr("d", this.arc);
-                
-        group.append("text")
-            .attr("text-anchor", "middle")
-            .attr("dy", "0.35em")
-            .style("font-size", "1.5rem")
-            .attr("transform", `translate(50%, 50%)`)
-            .text(`${this.dataset[0].value}%`)
-            .attr("fill", "white");
+        new DonutChart(
+            itemContainer.querySelector(".donut-chart"), 
+            newDataset, ["var(--main-green-color)", "gray"], 
+            100, 
+            100
+        );
     }
 }
 

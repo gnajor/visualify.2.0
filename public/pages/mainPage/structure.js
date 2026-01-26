@@ -1,7 +1,6 @@
 import { renderHeader } from "../../components/header/header.js";
 import { renderDecadePage } from "../mainPage/decadesPage/decadesPage.js";
 import { renderMostPlayedPage } from "./mostPlayedPage/mostPlayedPage.js";
-import { Selector } from "../../components/header/selector/selector.js";
 import { Switch } from "../../components/header/switch/switch.js";
 import { renderGenresPage } from "./genresPage/genresPage.js";
 import { renderMapPage } from "./mapPage/mapPage.js";
@@ -10,16 +9,14 @@ import { renderSideButtons } from "../../components/sideButtons/sideButtons.js";
 import { renderSummaryPage } from "./summaryPage/summaryPage.js";
 
 export function renderStructure(parent){
-    
-
     parent.innerHTML = `<header></header>
                         <main>
+                            <section id="summary-page"></section>
                             <section id="most-played-page" class="switch-button-needed"></section>
                             <section id="decades-page"></section>
                             <section id="genre-page"></section>
                             <section id="moods-page"></section>
                             <section id="music-map-page"></section>
-                            <section id="summary-page"></section>
                         </main>
                         <div id="side-buttons"></div>`;
 
@@ -43,14 +40,17 @@ export function renderStructure(parent){
     renderSummaryPage(summaryPage);
 }
 
-export function updateCurrentMainPage(pageValue, pageIndex){
+export function updateCurrentMainPage(width, height, pageIndex){
     const main = document.querySelector("main");
-    main.style.transform = `translate(${pageValue}, 0)`;
+    main.style.transform = `translate(${width}, ${height})`;
 
-    const selectorInstance = Selector.getCurrentSelectorById(pageIndex);
     const switchInstance = Switch.getCurrentSwitchById(pageIndex);
     
-    if(selectorInstance)Selector.updateSelector(selectorInstance);
     if(switchInstance)Switch.updateSwitch(switchInstance);
+}
+
+export function updateSummaryPagePos(value){
+    const summaryPage = document.querySelector("#summary-page");
+    summaryPage.style.left = value;
 }
 

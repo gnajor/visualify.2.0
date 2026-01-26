@@ -1,4 +1,4 @@
-import { Selector } from "../../../components/header/selector/selector.js";
+import { onSelectorChange } from "../../../components/header/selector/selector.js";
 import { getGenreData } from "../../../logic/utils.js";
 
 export function renderGenresPage(parent){
@@ -10,8 +10,7 @@ export function renderGenresPage(parent){
 
     const bubbleChart = new BubbleChart(diagramContainer, dataset["short_term"]);
 
-    const selectorInstance = Selector.getSelectorByPageId(parent.id);
-    selectorInstance.event((event) => {
+    onSelectorChange((event) => {
         bubbleChart.changeData(dataset[event.target.value]);
     }); 
 }

@@ -1,4 +1,4 @@
-import { Selector } from "../../../components/header/selector/selector.js";
+import { onSelectorChange } from "../../../components/header/selector/selector.js";
 import { formatSongs, getDecadeData } from "../../../logic/utils.js";
 
 export function renderDecadePage(parent){
@@ -15,8 +15,7 @@ export function renderDecadePage(parent){
     const circularChart = new CircularBarChart(`${parentId} .${diagramContainer.className}`, dataset["short_term"]);
     renderArtistDivs(`${parentId} .${songContainer.className}`, dataset["short_term"]);
 
-    const selectorInstance = Selector.getSelectorByPageId(parent.id);
-    selectorInstance.event((event) => {
+    onSelectorChange((event) => {
         circularChart.changeData(dataset[event.target.value]);
         renderArtistDivs(`${parentId} .${songContainer.className}`, dataset[event.target.value]);
     }); 

@@ -1,5 +1,5 @@
 import { apiCom } from "../../../apiCom/apiCom.js";
-import { Selector } from "../../../components/header/selector/selector.js";
+import { onSelectorChange } from "../../../components/header/selector/selector.js";
 import { getMoodsChartData} from "../../../logic/utils.js";
 
 export function renderMoodsPage(parent){
@@ -11,16 +11,15 @@ export function renderMoodsPage(parent){
 
 /*     const wordCloud = new WordCloud(diagramContainer, dataset, "short_term"); */
 
-    const selectorInstance = Selector.getSelectorByPageId(parent.id);
-    const controller = radarController(diagramContainer, dataset, selectorInstance);
+    const controller = radarController(diagramContainer, dataset);
     controller.loadRange("short_term");
 
-    selectorInstance.event((event) => {
+    onSelectorChange((event) => {
         controller.loadRange(event.target.value);
     }); 
 }
 
-function radarController(parent, fullDataset, selectorInstance){
+function radarController(parent, fullDataset){
     const startingDataset = [
         {
             "title": "Energy",
@@ -57,8 +56,6 @@ function radarController(parent, fullDataset, selectorInstance){
             chart.update(cache[range]);
             return;
         }
-
-        selectorInstance.disable();
         document.dispatchEvent(new CustomEvent("radar:processing"));
 
         const datasetToSetAndGet = [];
@@ -82,7 +79,6 @@ function radarController(parent, fullDataset, selectorInstance){
 
         cache[range] = formatted;
         chart.update(formatted);
-        selectorInstance.enable();
     }
 
     function formatTrackFeatures(tracks){

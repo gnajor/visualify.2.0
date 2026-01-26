@@ -1,18 +1,32 @@
 #summary-page{
     height: calc(100vh - var(--header-container-height));
-    --gap: 1rem;
-    --box-padding: 0.5rem
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    --gap: 1.5rem;
+    --box-padding: 1.2rem 1.5rem;
 }
 
 #summary-page #summary-box-container{
     display: flex;
     gap:var(--gap);
+    height: 100%;
+    width: 70rem;
+    justify-content: center;
+    align-items: center;
+    margin: 0 6rem;
 }
 
 #summary-page .outer-box{
     display: flex;
     flex-direction: column;
     gap: var(--gap);
+    flex-basis: 0;
+    flex-grow:1;
+}
+
+#summary-page .text-box:not(.text-box-underline){
+    padding: 1.5rem 1.8rem;
 }
 
 #summary-page .text-box{
@@ -20,54 +34,120 @@
     flex-direction: column;
 }
 
-#summary-page .text-box h3{
+#summary-page h3{
     color: var(--lightest-grey);
+    font-weight: normal;
 }
 
-#summary-page .text-box h2{
+#summary-page .text-box h1{
     color: var(--main-purple-color);
 }
 
-#summary-page .text-box-underline h2{
+#summary-page .text-box-underline h1{
     color: var(--white);
-    border-bottom: 2px solid var(--main-purple-color);
-}
-
-#summary-page .box:not(.text-box){
-    justify-content: center;
+    border-bottom: 4px solid var(--main-purple-color);
+    width: fit-content;
 }
 
 #summary-page .box{
-    padding: 0.5rem 0.7rem;
+    padding: var(--box-padding);
+    background-color: var(--menu-black-color);
+    border-radius: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap:0.5rem;
 }
 
+#summary-page .album-cover{
+    width: 100%;
+    border-radius: 0.6rem;
+}
 
+/* --------------- */
 /* left outer box */
+/* -------------- */
+
+#summary-page #left-outer-box{
+    flex-grow:1.2;
+}
+
+#summary-page #left-outer-box #developer{
+    height: 1.5rem;
+}
+
+#summary-page #left-outer-box #logout{
+    height: 2.25rem;
+}
+
 #summary-page #left-outer-box #top-container{
     display: flex;
     gap: var(--gap);
 }
 
-#summary-page #left-outer-box #developer-logout-container{
+#summary-page #left-outer-box #devloper-logout-container{
     display: flex;
     flex-direction: column;
     gap: var(--gap);
 }
 
+#summary-page #left-outer-box #devloper-logout-container > div{
+    flex-basis: 0;
+    flex-grow:1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#summary-page #left-outer-box #developer-box{
+    gap:1.5rem;
+}
+
+#summary-page #left-outer-box #logout-box{
+    background-color: var(--main-purple-color);
+    gap:1rem;
+}
+
+#summary-page #left-outer-box #logout-box h3{
+    color: black;
+}
+
 #summary-page #left-outer-box #avg-song-pop-box{
     display: flex;
     flex-direction: column;
+    flex-basis: 0;
+    flex-grow:3;
+    text-align: center;
+    gap: 2rem;
 }
 
 #summary-page #most-listened-country{
     display: flex;
     flex-direction: column;
+    text-align: center;
+    padding-left: 3rem;
+    padding-right: 3rem;
 }
 
+#summary-page #most-listened-country h1{
+    color: var(--main-purple-color);
+}
 
+/* ---------------- */
 /* center outer box */
+/* ---------------- */
 
 
-#summary-page .te{
-
+#summary-page #center-outer-box{
+    margin-top:3rem;
 }
+
+#summary-page #right-outer-box{
+    margin-bottom:3rem;
+}
+
+#summary-page #avg-song-graph .donut-chart text{
+    fill: var(--main-purple-color);
+    font-size: 1.25rem;
+}  
+

@@ -1,6 +1,4 @@
-import { State } from "../../../index.js";
-import { updateCurrentMainPage } from "../../../pages/mainPage/structure.js";
-import { Selector } from "../selector/selector.js";
+import { updateCurrentMainPage, updateSummaryPagePos } from "../../../pages/mainPage/structure.js";
 
 export function renderNav(parent){
     parent.innerHTML = `<div id="nav-items">
@@ -20,24 +18,30 @@ export function renderNav(parent){
     const dashboardItem = parent.querySelector("#dashboard-nav-item"); 
     const marker = document.querySelector("header nav #marker");
 
+    let currentPageId = 0;
+
     navItems[0].classList.add("marked");
     updateNavMarker();
     navItems.forEach((element, i) => {
         element.id = i;
         element.addEventListener("click", () => {
+            currentPageId = i;
             navItems.forEach(element => element.classList.remove("marked"));
             element.classList.add("marked");
             updateNavMarker();
-            updateCurrentMainPage(`${- i * 100}vw` , i);
+            updateCurrentMainPage(`${- currentPageId * 100}vw`, 0, currentPageId);
             dashboardIconChange("remove");
+            updateSummaryPagePos(`${currentPageId * 100}vw`);
             marker.classList.remove("invisible");
         })
     });
 
     dashboardItem.addEventListener("click", () => {
         dashboardIconChange("add");
+        updateCurrentMainPage(`${-currentPageId * 100}vw`, 0, currentPageId);
 
         if(document.querySelector("header nav .nav-item.marked")){
+            updateCurrentMainPage(`${-currentPageId * 100}vw`, "100vh", currentPageId);
             document.querySelector("header nav .nav-item.marked").classList.remove("marked");
 
             const marker = document.querySelector("header nav #marker");

@@ -70,3 +70,12 @@
     color: rgb(112, 112, 112);
     font-weight: bold;
 }
+
+#most-played-page .donut-chart{
+    width: 3.5rem;
+    height: 3.5rem;
+}
+
+#most-played-page .donut-chart text{
+    font-size: 1.5rem;
+}

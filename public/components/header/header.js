@@ -1,6 +1,6 @@
 import { Logo } from "../logo/logo.js";
 import { renderNav } from "./nav/nav.js";
-import { Selector } from "./selector/selector.js";
+import { renderSelector } from "./selector/selector.js";
 import { Switch } from "./switch/switch.js";
 
 export function renderHeader(parent, pageDoms){
@@ -26,8 +26,9 @@ export function renderHeader(parent, pageDoms){
     propertiesContainer.style.width = width;
     propertiesContainer.style.height = height;
 
+    renderSelector(selectContainer);
+
     pageDoms.forEach((page, i) => {
-        const selector = new Selector(selectContainer, page.id, i);
         let switchCounter = 0;
         
         if(page.className === "switch-button-needed"){
@@ -38,11 +39,5 @@ export function renderHeader(parent, pageDoms){
                 switchInstance.element.classList.add("current");
             }
         } 
-
-        if(i === 0){
-            selector.element.classList.add("current");
-        }
-
-        selector.renderItemsLongRange();
     });
 }

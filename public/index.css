@@ -91,6 +91,11 @@ section .diagram-container{
     height: calc(100vh - var(--header-container-height));
 }
 
+section#summary-page{
+    position: absolute;
+    top:-100vh;
+}
+
 #side-buttons{
     position: absolute;
     top:50%;
