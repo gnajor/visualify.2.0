@@ -125,8 +125,8 @@
     display: flex;
     flex-direction: column;
     text-align: center;
-    padding-left: 3rem;
-    padding-right: 3rem;
+    padding-left: 5rem;
+    padding-right: 5rem;
 }
 
 #summary-page #most-listened-country h1{
