@@ -89,14 +89,6 @@ export const State = {
     },
 
     getStateOverlayDate(){
-        const formatted = [];
-        const timeTerms = Object.keys(State.userData.tracks);
-
-        for(const timeTerm of timeTerms){
-            
-        }
-
-
         return State.overlayData;
     }
 }

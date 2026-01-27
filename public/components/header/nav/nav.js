@@ -23,7 +23,7 @@ export function renderNav(parent){
     navItems[0].classList.add("marked");
     updateNavMarker();
     navItems.forEach((element, i) => {
-        element.id = i;
+        element.id = currentPageId;
         element.addEventListener("click", () => {
             currentPageId = i;
             navItems.forEach(element => element.classList.remove("marked"));
@@ -38,12 +38,11 @@ export function renderNav(parent){
 
     dashboardItem.addEventListener("click", () => {
         dashboardIconChange("add");
-        updateCurrentMainPage(`${-currentPageId * 100}vw`, 0, currentPageId);
-
+        
         if(document.querySelector("header nav .nav-item.marked")){
             updateCurrentMainPage(`${-currentPageId * 100}vw`, "100vh", currentPageId);
-            document.querySelector("header nav .nav-item.marked").classList.remove("marked");
 
+            document.querySelector("header nav .nav-item.marked").classList.remove("marked");
             const marker = document.querySelector("header nav #marker");
             marker.classList.add("invisible"); 
         }
@@ -57,7 +56,6 @@ export function renderNav(parent){
             blackIcon.classList.add("invisible");
             whiteIcon.classList.remove("invisible");
             dashboardItem.classList.remove("marked");
-            
         }
         else{
             blackIcon.classList.remove("invisible");

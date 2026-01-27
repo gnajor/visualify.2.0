@@ -11,12 +11,12 @@ import { renderSummaryPage } from "./summaryPage/summaryPage.js";
 export function renderStructure(parent){
     parent.innerHTML = `<header></header>
                         <main>
-                            <section id="summary-page"></section>
                             <section id="most-played-page" class="switch-button-needed"></section>
                             <section id="decades-page"></section>
                             <section id="genre-page"></section>
                             <section id="moods-page"></section>
                             <section id="music-map-page"></section>
+                            <section id="summary-page"></section>
                         </main>
                         <div id="side-buttons"></div>`;
 

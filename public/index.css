@@ -94,6 +94,8 @@ section .diagram-container{
 section#summary-page{
     position: absolute;
     top:-100vh;
+    left: 0;
+    transition:400ms 400ms left ease-in-out;
 }
 
 #side-buttons{
