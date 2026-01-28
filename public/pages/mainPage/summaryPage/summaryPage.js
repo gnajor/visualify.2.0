@@ -179,7 +179,7 @@ function renderRightOuterBox(parent, data){
                             <h1>${data.songName}</h1>
                         </div>
                         <div class="text-box text-box-underline box">
-                            <h3>Most Listened to Genre</h3>
+                            <h3>Most Listened to Decade</h3>
                             <h1>${data.decade}</h1>
                         </div>`;
 }

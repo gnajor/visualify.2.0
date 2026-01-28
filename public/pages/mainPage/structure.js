@@ -45,6 +45,7 @@ export function updateCurrentMainPage(width, height, pageIndex){
     main.style.transform = `translate(${width}, ${height})`;
 
     const switchInstance = Switch.getCurrentSwitchById(pageIndex);
+    console.log(pageIndex)
     
     if(switchInstance)Switch.updateSwitch(switchInstance);
 }

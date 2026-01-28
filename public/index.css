@@ -77,6 +77,10 @@ main{
   transition: none;
 }
 
+.no-transition #summary-page{
+    transition: none;
+}
+
 section{
     position: relative;
     min-width: 100vw;
